@@ -40,3 +40,27 @@
 # - name: Run  drush make file
 #   shell:  >
 #     /opt/d7/bin/d7_make.sh /srv/repository https://raw.githubusercontent.com/OULibraries/repo-ops/master/make/repo.make
+
+
+- name: Ensure /opt/oulib/island/bin exists
+  file:
+    path: /opt/oulib/island/bin
+    state: directory
+    mode: 0655
+    owner: root
+    group: wheel
+    recurse: yes
+  tags:
+    - assets
+
+- name: Copy scripts to /opt/oulib/island/bin
+  copy:
+    src: "{{ item }}"
+    dest: /opt/oulib/island/bin/
+    mode: 0754
+    owner: root
+    group: wheel
+  with_items:
+    - repo.enable.sh
+  tags: 
+    - assets

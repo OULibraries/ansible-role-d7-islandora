@@ -1,4 +1,15 @@
 ---
-- include: install.yml
+- include: islandora.yml
   sudo: yes
+  tags: 
+    - islandora
 
+- include: gsearch.yml
+  sudo: yes
+  tags:
+    - gsearch
+
+- include: djatoka.yml
+  sudo: yes
+  tags:
+    - djatoka
