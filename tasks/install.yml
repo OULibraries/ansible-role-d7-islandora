@@ -1,0 +1,42 @@
+---
+- name: Get the Islandora Drupal Filter
+  get_url:
+    url: "https://github.com/Islandora/islandora_drupal_filter/releases/download/v7.1.3/fcrepo-drupalauthfilter-3.8.1.jar"
+    dest: "/tmp/downloads/fcrepo-drupalauthfilter-3.8.1.jar"
+
+- name: Install the Islandora Drupal Filter
+  copy:
+    src: "/tmp/downloads/fcrepo-drupalauthfilter-3.8.1.jar"
+    dest: "/usr/share/tomcat/webapps/fedora/WEB-INF/lib/fcrepo-drupalauthfilter-3.8.1.jar"
+    owner: "tomcat"
+    group: "tomcat"
+
+- name: Let Fedora know aobut the Islandora Drupal Filter 
+  copy: 
+    src: "jaas.conf"
+    dest: "{{fedora_home}}/server/config/jaas.conf"
+    owner: "tomcat"
+    group: "tomcat"
+
+- name: Configure the Islandora Drupal Filter 
+  template: 
+    src: "filter-drupal.xml.j2"
+    dest: "{{fedora_home}}/server/config/filter-drupal.xml"
+    owner: "tomcat"
+    group: "tomcat"
+
+- name: Restart tomcat
+  service:
+    name: "tomcat"
+    state: "restarted"
+
+# - name: Install the repository Drupal site 
+#   shell: >
+#     D7_DBSU_PASS=root
+#     /opt/d7/bin/d7_init_simple.sh /srv/repository
+#   args:
+#     creates: "/srv/repository/etc/srv_repository.conf"
+
+# - name: Run  drush make file
+#   shell:  >
+#     /opt/d7/bin/d7_make.sh /srv/repository https://raw.githubusercontent.com/OULibraries/repo-ops/master/make/repo.make
