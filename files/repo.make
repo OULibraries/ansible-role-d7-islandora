@@ -22,4 +22,5 @@ libraries[tuque][download][type] = "git"
 libraries[tuque][download][url] = "https://github.com/Islandora/tuque.git"
 libraries[tuque][download][tag] = "7.x-1.7"
 
+;
 
