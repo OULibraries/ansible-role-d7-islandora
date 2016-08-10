@@ -1,4 +1,7 @@
 ---
+- include: yum.yml
+  sudo: yes
+
 - include: islandora.yml
   sudo: yes
   tags: 

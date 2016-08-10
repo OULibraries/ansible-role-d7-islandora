@@ -4,16 +4,17 @@ core = 7.x
 api = 2
 projects[drupal][version] = "7.50"
 
-; Modules
-projects[islandora][type] = "module"
-projects[islandora][download][type] = "git"
-projects[islandora][download][url] = "https://github.com/Islandora/islandora.git"
-projects[islandora][download][tag] = "7.x-1.7"
+; Defaults that apply to all modules.
+defaults[projects][type] = "module"
+defaults[projects][download][type] = "git"
+defaults[projects][download][branch]  = "7.x"
+defaults[projects][download][overwrite] = TRUE
 
-projects[islandora_solution_pack_collection][type] = "module"
-projects[islandora_solution_pack_collection][download][type] = "git"
+; Modules
+projects[islandora][download][url] = "https://github.com/Islandora/islandora.git"
 projects[islandora_solution_pack_collection][download][url] = "https://github.com/Islandora/islandora_solution_pack_collection.git"
-projects[islandora_solution_pack_collection][download][tag] = "7.x-1.7"
+projects[islandora_solution_pack_image][download][url] = "https://github.com/Islandora/islandora_solution_pack_image.git"
+
 
 ; Libraries
 libraries[tuque][type] = "library"
