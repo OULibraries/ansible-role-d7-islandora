@@ -3,13 +3,13 @@ core = 7.x
 
 api = 2
 projects[drupal][version] = "7.50"
-defaults[projects][type] = "core"
+projects[drupal][type] = "core"
 projects[drupal][download][type] = "get"
 
 ; Defaults that apply to all modules.
 defaults[projects][type] = "module"
 defaults[projects][download][type] = "git"
-defaults[projects][download][branch]  = "7.x"
+defaults[projects][download][tag]  = "7.x-1.7"
 defaults[projects][download][overwrite] = TRUE
 
 ; Modules
