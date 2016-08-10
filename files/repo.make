@@ -4,7 +4,13 @@ core = 7.x
 api = 2
 projects[drupal][version] = "7.50"
 
-; Modules
+; drupal.org  Modules
+
+projects[imagemagick][version] = "1.0"
+
+
+; Islandora modules
+
 projects[islandora][type] = "module"
 projects[islandora][download][type] = "git"
 projects[islandora][download][url] = "https://github.com/Islandora/islandora.git"
