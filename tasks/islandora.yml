@@ -41,6 +41,26 @@
 #   shell:  >
 #     /opt/d7/bin/d7_make.sh /srv/repository https://raw.githubusercontent.com/OULibraries/repo-ops/master/make/repo.make
 
+- name: Install pexpect python module
+  command: >
+    pip install pexpect
+
+- name: Install the repository Drupal site
+  expect:
+    command: /vagrant/roles/OULibraries.d7/files/d7_init.sh /srv/repository
+    responses:
+      'Enter host suffix:': '' # '{{ httpd_dn_suffix }}'
+      'Enter MYSQL host name:': '' # '{{ mariadb_host }}'
+      'Enter MYSQL host port:': '' # '{{ mariadb_port }}'
+      'Enter MYSQL user:': '' # '{{ mariadb_root_user }}'
+      'Enter MYSQL password:': '{{ mariadb_root_pass }}'
+    creates: /srv/repository
+    timeout: 90
+    echo: yes
+
+- name: Run  drush make file
+  shell:  >
+    /vagrant/roles/OULibraries.d7/files/d7_make.sh /srv/repository https://raw.githubusercontent.com/OULibraries/ansible-role-d7-islandora/master/files/repo.make 
 
 - name: Ensure /opt/oulib/island/bin exists
   file:
@@ -64,3 +84,6 @@
     - repo.enable.sh
   tags: 
     - assets
+
+- name: Run repo.enable.sh
+  command: /opt/oulib/island/bin/repo.enable.sh
