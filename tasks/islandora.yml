@@ -60,7 +60,8 @@
 
 - name: Run  drush make file
   shell:  >
-    /vagrant/roles/OULibraries.d7/files/d7_make.sh /srv/repository https://raw.githubusercontent.com/OULibraries/ansible-role-d7-islandora/master/files/repo.make 
+    /vagrant/roles/OULibraries.d7/files/d7_make.sh /srv/repository https://raw.githubusercontent.com/OULibraries/ansible-role-d7-islandora/master/files/repo.make
+  ignore_errors: yes 
 
 - name: Ensure /opt/oulib/island/bin exists
   file:
