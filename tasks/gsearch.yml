@@ -46,4 +46,12 @@
     - /usr/share/tomcat/bin/shutdown.sh
     - /usr/share/tomcat/bin/startup.sh
 
+- name: Backup original fgsconfig-basic-for-islandora.properties
+  command: mv /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties.bak
 
+- name: Configure fgsconfig-basic-for-islandora.properties
+  template:
+    src: "fgsconfig-basic-for-islandora.properties.j2"
+    dest: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties
+    owner: "tomcat"
+    group: "tomcat"
