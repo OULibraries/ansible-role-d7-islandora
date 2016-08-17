@@ -34,7 +34,7 @@
   blockinfile:
     dest: /usr/local/fedora/server/config/fedora-users.xml
     block: |
-      <user name="fgsAdmin" password="[password]">
+      <user name="fgsAdmin" password="fgsAdmin">
         <attribute name="fedoraRole">
           <value>administrator</value>
         </attribute>
@@ -46,12 +46,21 @@
     - /usr/share/tomcat/bin/shutdown.sh
     - /usr/share/tomcat/bin/startup.sh
 
+- name: Backup original fgsconfig-basic-for-islandora.properties
+  command: mv /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties.bak
+
+- name: Configure fgsconfig-basic-for-islandora.properties
+  template:
+    src: "fgsconfig-basic-for-islandora.properties.j2"
+    dest: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties
+    owner: "tomcat"
+    group: "tomcat"
+
 - name: Assert platform is supported
   tags: ant
   assert:
     that:
       - ansible_os_family in ['Archlinux', 'Debian', 'RedHat', 'Suse']
-
 
 - name: Install Ant download directory (local)
   tags: ant
@@ -62,7 +71,6 @@
     mode=0755
     dest=/usr/local/src/ansible/data
 
-
 - name: Download Ant (local)
   tags: ant
   local_action: get_url
@@ -71,8 +79,6 @@
     owner=0
     group=0
     mode=0644
-#    sha512sum={{ ant_redis_sha512sum }}
-
 
 - name: Install Ant installation directory
   tags: ant
