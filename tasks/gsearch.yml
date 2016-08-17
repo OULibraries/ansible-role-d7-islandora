@@ -28,7 +28,7 @@
   copy: src=/tmp/downloads/solr-4.2.0/example/solr/ dest={{ fedora_home }}/solr/
 
 - name: Copy solr to Tomcat Webapps Directory
-  copy: src=/tmp/downloads/solr-4.2.0/dist/solr-4.2.0.war dest=/usr/share/tomcat/webapps/solr-4.2.0.war
+  copy: src=/tmp/downloads/solr-4.2.0/dist/solr-4.2.0.war dest=/usr/share/tomcat/webapps/solr.war
 
 - name: Insert "fgsAdmin" user in fedora-users.xml
   blockinfile:
