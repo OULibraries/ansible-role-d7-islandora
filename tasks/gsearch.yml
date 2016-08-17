@@ -1,1 +1,49 @@
 ---
+
+- name: Download GSearch from Sourceforge
+  get_url:
+    url: "http://downloads.sourceforge.net/fedora-commons/fedoragsearch-2.7.zip"
+    timeout: 90
+    dest: "/tmp/downloads/fedoragsearch-2.7.zip"
+
+- name: UnArchive GSearch
+  unarchive: src=/tmp/downloads/fedoragsearch-2.7.zip dest=/tmp/downloads remote_src=yes
+
+- name: Copy GSearch to Tomcat Webapps Directory
+  copy: src=/tmp/downloads/fedoragsearch-2.7/fedoragsearch.war dest=/usr/share/tomcat/webapps/fedoragsearch.war
+
+- name: Download Solr from Apache.org
+  get_url:
+    url: "https://archive.apache.org/dist/lucene/solr/4.2.0/solr-4.2.0.tgz"
+    timeout: 90
+    dest: "/tmp/downloads/solr-4.2.0.tgz"
+
+- name: UnArchive Solr
+  unarchive: src=/tmp/downloads/solr-4.2.0.tgz dest=/tmp/downloads remote_src=yes
+
+- name: Create new directory for fedora
+  file: path={{ fedora_home }}/solr state=directory mode=0755
+
+- name: Copy solr example files to the new directory
+  copy: src=/tmp/downloads/solr-4.2.0/example/solr/ dest={{ fedora_home }}/solr/
+
+- name: Copy solr to Tomcat Webapps Directory
+  copy: src=/tmp/downloads/solr-4.2.0/dist/solr-4.2.0.war dest=/usr/share/tomcat/webapps/solr-4.2.0.war
+
+- name: Insert "fgsAdmin" user in fedora-users.xml
+  blockinfile:
+    dest: /usr/local/fedora/server/config/fedora-users.xml
+    block: |
+      <user name="fgsAdmin" password="[password]">
+        <attribute name="fedoraRole">
+          <value>administrator</value>
+        </attribute>
+      </user>
+
+- name: Restart Fedora to deploy GSearch and Solr
+  command: "{{ item }}"
+  with_items:
+    - /usr/share/tomcat/bin/shutdown.sh
+    - /usr/share/tomcat/bin/startup.sh
+
+

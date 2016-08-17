@@ -1,11 +1,11 @@
 ---
-- include: yum.yml
-  sudo: yes
+# - include: yum.yml
+#  sudo: yes
 
-- include: islandora.yml
-  sudo: yes
-  tags: 
-    - islandora
+#- include: islandora.yml
+#  sudo: yes
+#  tags: 
+#    - islandora
 
 - include: gsearch.yml
   sudo: yes
