@@ -49,6 +49,9 @@
 - name: Backup original fgsconfig-basic-for-islandora.properties
   command: mv /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties.bak
 
+- name: Ensure old fgsconfig-basic-for-islandora.properties is removed
+  file: path=/usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties state=absent
+
 - name: Configure fgsconfig-basic-for-islandora.properties
   template:
     src: "fgsconfig-basic-for-islandora.properties.j2"
@@ -109,4 +112,4 @@
 
 - name: Build fgsconfig
   command: >
-    ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
+    /usr/share/ant/apache-ant-1.9.7/bin/ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
