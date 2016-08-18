@@ -55,3 +55,15 @@
     dest: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties
     owner: "tomcat"
     group: "tomcat"
+
+- name: Backup original fgsconfig-basic.xml
+  command: cp /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml.bak
+
+- name: Configure fgsconfig-basic.xml 
+  replace: 
+    dest: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
+    regexp: >
+      ^(.+)fgsconfig-basic.properties(.+)$
+    replace: >
+      \1fgsconfig-basic-for-islandora.properties\2
+
