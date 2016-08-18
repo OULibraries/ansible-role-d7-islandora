@@ -67,3 +67,46 @@
     replace: >
       \1fgsconfig-basic-for-islandora.properties\2
 
+- name: Assert platform is supported
+  tags: ant
+  assert:
+    that:
+      - ansible_os_family in ['Archlinux', 'Debian', 'RedHat', 'Suse']
+
+- name: Install Ant download directory (local)
+  tags: ant
+  local_action: file
+    state=directory
+    owner=0
+    group=0
+    mode=0755
+    dest=/usr/local/src/ansible/data
+
+- name: Download Ant (local)
+  tags: ant
+  local_action: get_url
+    dest=/usr/local/src/ansible/data/apache-ant-1.9.7-bin.tar.gz
+    url=http://mirror.ox.ac.uk/sites/rsync.apache.org/ant/binaries/apache-ant-1.9.7-bin.tar.gz
+    owner=0
+    group=0
+    mode=0644
+
+- name: Install Ant installation directory
+  tags: ant
+  file:
+    state=directory
+    owner=0
+    group=0
+    mode=0755
+    dest=/usr/share/ant
+
+
+- name: Install Ant
+  tags: ant
+  unarchive:
+    src=/usr/local/src/ansible/data/apache-ant-1.9.7-bin.tar.gz
+    dest=/usr/share/ant
+
+- name: Build fgsconfig
+  command: >
+    ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
