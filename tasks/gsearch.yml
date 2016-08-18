@@ -39,7 +39,6 @@
           <value>administrator</value>
         </attribute>
       </user>
-
 - name: Restart Fedora to deploy GSearch and Solr
   command: "{{ item }}"
   with_items:
@@ -69,12 +68,6 @@
       ^(.+)fgsconfig-basic.properties(.+)$
     replace: >
       \1fgsconfig-basic-for-islandora.properties\2
-
-- name: Assert platform is supported
-  tags: ant
-  assert:
-    that:
-      - ansible_os_family in ['Archlinux', 'Debian', 'RedHat', 'Suse']
 
 - name: Install Ant download directory (local)
   tags: ant
@@ -109,6 +102,14 @@
   unarchive:
     src=/usr/local/src/ansible/data/apache-ant-1.9.7-bin.tar.gz
     dest=/usr/share/ant
+
+- name: Build link to /usr/bin/ant
+  tags: ant
+  file:
+    state=link
+    force=true
+    src=/usr/share/ant/apache-ant-1.9.7/bin/ant
+    dest=/usr/bin/ant
 
 - name: Build fgsconfig
   command: >
