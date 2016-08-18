@@ -39,7 +39,6 @@
           <value>administrator</value>
         </attribute>
       </user>
-
 - name: Restart Fedora to deploy GSearch and Solr
   command: "{{ item }}"
   with_items:
@@ -48,6 +47,9 @@
 
 - name: Backup original fgsconfig-basic-for-islandora.properties
   command: mv /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties.bak
+
+- name: Ensure old fgsconfig-basic-for-islandora.properties is removed
+  file: path=/usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties state=absent
 
 - name: Configure fgsconfig-basic-for-islandora.properties
   template:
@@ -66,12 +68,6 @@
       ^(.+)fgsconfig-basic.properties(.+)$
     replace: >
       \1fgsconfig-basic-for-islandora.properties\2
-
-- name: Assert platform is supported
-  tags: ant
-  assert:
-    that:
-      - ansible_os_family in ['Archlinux', 'Debian', 'RedHat', 'Suse']
 
 - name: Install Ant download directory (local)
   tags: ant
