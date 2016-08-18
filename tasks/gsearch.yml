@@ -114,3 +114,16 @@
 - name: Build fgsconfig
   command: >
     ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
+
+- name: Add the Solr context file
+  template:
+    src: "solr.xml.j2"
+    dest: /usr/share/tomcat/conf/Catalina/localhost/solr.xml
+    owner: "tomcat"
+    group: "tomcat"
+
+- name: Restart tomcat for Solr
+  command: "{{ item }}"
+  with_items:
+    - /usr/share/tomcat/bin/shutdown.sh
+    - /usr/share/tomcat/bin/startup.sh
