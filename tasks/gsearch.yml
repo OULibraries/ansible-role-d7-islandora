@@ -113,7 +113,7 @@
 
 - name: Build fgsconfig
   command: >
-    /usr/share/ant/apache-ant-1.9.7/bin/ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
+    ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
 
 - name: Backup original solr schema.xml
   command: mv -v /usr/local/fedora/solr/collection1/conf/schema.xml /usr/local/fedora/solr/collection1/conf/schema.bak
