@@ -48,8 +48,8 @@
 - name: Backup original fgsconfig-basic-for-islandora.properties
   command: mv /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties.bak
 
-- name: Ensure old fgsconfig-basic-for-islandora.properties is removed
-  file: path=/usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties state=absent
+#- name: Ensure old fgsconfig-basic-for-islandora.properties is removed
+#  file: path=/usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties state=absent
 
 - name: Configure fgsconfig-basic-for-islandora.properties
   template:
@@ -115,6 +115,12 @@
   command: >
     ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
 
+- name: Backup original solr schema.xml
+  command: mv -v /usr/local/fedora/solr/collection1/conf/schema.xml /usr/local/fedora/solr/collection1/conf/schema.bak
+
+- name: Copy ANT generated schema to schema.xml
+  command: cp -v /usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/conf/schema-4.2.0-for-fgs-2.7.xml /usr/local/fedora/solr/collection1/conf/schema.xml
+
 - name: Add the Solr context file
   template:
     src: "solr.xml.j2"
@@ -122,7 +128,7 @@
     owner: "tomcat"
     group: "tomcat"
 
-- name: Restart tomcat for Solr
+- name: Restart Tomcat for Solr
   command: "{{ item }}"
   with_items:
     - /usr/share/tomcat/bin/shutdown.sh
