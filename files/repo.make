@@ -16,15 +16,15 @@ projects[islandora][download][type] = "git"
 projects[islandora][download][url] = "https://github.com/Islandora/islandora.git"
 projects[islandora][download][tag] = "7.x-1.7"
 
-projects[islandora_solution_pack_collection][type] = "module"
-projects[islandora_solution_pack_collection][download][type] = "git"
-projects[islandora_solution_pack_collection][download][url] = "https://github.com/Islandora/islandora_solution_pack_collection.git"
-projects[islandora_solution_pack_collection][download][tag] = "7.x-1.7"
-
 projects[islandora_solution_pack_image][type] = "module"
 projects[islandora_solution_pack_image][download][type] = "git"
 projects[islandora_solution_pack_image][download][url] = "https://github.com/Islandora/islandora_solr_search.git"
 projects[islandora_solution_pack_image][download][tag] = "7.x-1.7"
+
+projects[islandora_solution_pack_collection][type] = "module"
+projects[islandora_solution_pack_collection][download][type] = "git"
+projects[islandora_solution_pack_collection][download][url] = "https://github.com/Islandora/islandora_solution_pack_collection.git"
+projects[islandora_solution_pack_collection][download][tag] = "7.x-1.7"
 
 projects[islandora_solution_pack_image][type] = "module"
 projects[islandora_solution_pack_image][download][type] = "git"
@@ -36,6 +36,3 @@ libraries[tuque][type] = "library"
 libraries[tuque][download][type] = "git"
 libraries[tuque][download][url] = "https://github.com/Islandora/tuque.git"
 libraries[tuque][download][tag] = "7.x-1.7"
-
-;
-
