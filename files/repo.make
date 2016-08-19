@@ -23,6 +23,11 @@ projects[islandora_solution_pack_collection][download][tag] = "7.x-1.7"
 
 projects[islandora_solution_pack_image][type] = "module"
 projects[islandora_solution_pack_image][download][type] = "git"
+projects[islandora_solution_pack_image][download][url] = "https://github.com/Islandora/islandora_solr_search.git"
+projects[islandora_solution_pack_image][download][tag] = "7.x-1.7"
+
+projects[islandora_solution_pack_image][type] = "module"
+projects[islandora_solution_pack_image][download][type] = "git"
 projects[islandora_solution_pack_image][download][url] = "https://github.com/Islandora/islandora_solution_pack_image.git"
 projects[islandora_solution_pack_image][download][tag] = "7.x-1.7"
 
