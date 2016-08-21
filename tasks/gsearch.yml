@@ -1,5 +1,4 @@
 ---
-
 - name: Download GSearch from Sourceforge
   get_url:
     url: "http://downloads.sourceforge.net/fedora-commons/fedoragsearch-2.7.zip"
@@ -7,10 +6,16 @@
     dest: "/tmp/downloads/fedoragsearch-2.7.zip"
 
 - name: UnArchive GSearch
-  unarchive: src=/tmp/downloads/fedoragsearch-2.7.zip dest=/tmp/downloads remote_src=yes
+  unarchive:
+    src: /tmp/downloads/fedoragsearch-2.7.zip
+    dest: /tmp/downloads
+    remote_src: yes
 
 - name: Copy GSearch to Tomcat Webapps Directory
-  copy: src=/tmp/downloads/fedoragsearch-2.7/fedoragsearch.war dest=/usr/share/tomcat/webapps/fedoragsearch.war
+  copy:
+    src: "/tmp/downloads/fedoragsearch-2.7/fedoragsearch.war"
+    dest: "/usr/share/tomcat/webapps/fedoragsearch.war"
+    remote_src: true
 
 - name: Download Solr from Apache.org
   get_url:
@@ -19,16 +24,27 @@
     dest: "/tmp/downloads/solr-4.2.0.tgz"
 
 - name: UnArchive Solr
-  unarchive: src=/tmp/downloads/solr-4.2.0.tgz dest=/tmp/downloads remote_src=yes
+  unarchive:
+    src: /tmp/downloads/solr-4.2.0.tgz
+    dest: /tmp/downloads
+    remote_src: yes
 
 - name: Create new directory for fedora
-  file: path={{ fedora_home }}/solr state=directory mode=0755
+  file:
+    path: "{{ fedora_home }}/solr"
+    state: directory
+    mode: 0755
 
+# Ansible copy doesn't support recusive copy of directories
 - name: Copy solr example files to the new directory
-  copy: src=/tmp/downloads/solr-4.2.0/example/solr/ dest={{ fedora_home }}/solr/
+  shell: >
+    cp --recursive -v /tmp/downloads/solr-4.2.0/example/solr/ "{{ fedora_home }}/solr/"
 
 - name: Copy solr to Tomcat Webapps Directory
-  copy: src=/tmp/downloads/solr-4.2.0/dist/solr-4.2.0.war dest=/usr/share/tomcat/webapps/solr.war
+  copy:
+    src: /tmp/downloads/solr-4.2.0/dist/solr-4.2.0.war
+    dest: /usr/share/tomcat/webapps/solr.war
+    remote_src: true
 
 - name: Insert "fgsAdmin" user in fedora-users.xml
   blockinfile:
@@ -39,14 +55,17 @@
           <value>administrator</value>
         </attribute>
       </user>
-- name: Restart Fedora to deploy GSearch and Solr
-  command: "{{ item }}"
-  with_items:
-    - /usr/share/tomcat/bin/shutdown.sh
-    - /usr/share/tomcat/bin/startup.sh
+
+- name: Restart tomcat to deploy GSearch and Solr wars
+  service:
+    name: "tomcat"
+    state: "restarted"
 
 - name: Backup original fgsconfig-basic-for-islandora.properties
-  command: mv /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties.bak
+  copy:
+    src: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties
+    dest: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties.bak
+    remote_src: true
 
 - name: Configure fgsconfig-basic-for-islandora.properties
   template:
@@ -56,67 +75,66 @@
     group: "tomcat"
 
 - name: Backup original fgsconfig-basic.xml
-  command: cp /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml.bak
+  copy:
+    src: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
+    dest: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml.bak
 
-- name: Configure fgsconfig-basic.xml 
-  replace: 
+- name: Configure fgsconfig-basic.xml
+  replace:
     dest: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
     regexp: >
       ^(.+)fgsconfig-basic.properties(.+)$
     replace: >
       \1fgsconfig-basic-for-islandora.properties\2
 
-- name: Install Ant download directory (local)
+- name: Download Ant
   tags: ant
-  local_action: file
-    state=directory
-    owner=0
-    group=0
-    mode=0755
-    dest=/usr/local/src/ansible/data
-
-- name: Download Ant (local)
-  tags: ant
-  local_action: get_url
-    dest=/usr/local/src/ansible/data/apache-ant-1.9.7-bin.tar.gz
-    url=http://mirror.ox.ac.uk/sites/rsync.apache.org/ant/binaries/apache-ant-1.9.7-bin.tar.gz
-    owner=0
-    group=0
-    mode=0644
+  get_url:
+    url: http://mirror.ox.ac.uk/sites/rsync.apache.org/ant/binaries/apache-ant-1.9.7-bin.tar.gz
+    dest: /tmp/downloads/apache-ant-1.9.7-bin.tar.gz
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Install Ant installation directory
   tags: ant
   file:
-    state=directory
-    owner=0
-    group=0
-    mode=0755
-    dest=/usr/share/ant
-
+    path: /opt/apache/
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
 
 - name: Install Ant
   tags: ant
   unarchive:
-    src=/usr/local/src/ansible/data/apache-ant-1.9.7-bin.tar.gz
-    dest=/usr/share/ant
+    remote_src: yes
+    src: /tmp/downloads/apache-ant-1.9.7-bin.tar.gz
+    dest: /opt/apache
 
 - name: Build link to /usr/bin/ant
   tags: ant
   file:
-    state=link
-    force=true
-    src=/usr/share/ant/apache-ant-1.9.7/bin/ant
-    dest=/usr/bin/ant
+    state: link
+    force: true
+    src: /opt/apache/apache-ant-1.9.7/bin/ant
+    dest: /usr/bin/ant
 
 - name: Build fgsconfig
   command: >
     ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
 
 - name: Backup original solr schema.xml
-  command: mv -v /usr/local/fedora/solr/collection1/conf/schema.xml /usr/local/fedora/solr/collection1/conf/schema.bak
+  copy:
+    src: /usr/local/fedora/solr/collection1/conf/schema.xml
+    dest: /usr/local/fedora/solr/collection1/conf/schema.bak
+    remote_src: true
 
 - name: Copy ANT generated schema to schema.xml
-  command: cp -v /usr/local/fedora/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/conf/schema-4.2.0-for-fgs-2.7.xml /usr/local/fedora/solr/collection1/conf/schema.xml
+  copy:
+    src: /usr/share/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/conf/schema-4.2.0-for-fgs-2.7.xml
+    dest: /usr/local/fedora/solr/collection1/conf/schema.xml
+    remote_src: true
 
 - name: Add the Solr context file
   template:
@@ -125,8 +143,7 @@
     owner: "tomcat"
     group: "tomcat"
 
-- name: Restart Tomcat for Solr
-  command: "{{ item }}"
-  with_items:
-    - /usr/share/tomcat/bin/shutdown.sh
-    - /usr/share/tomcat/bin/startup.sh
+- name: Restart tomcat
+  service:
+    name: "tomcat"
+    state: "restarted"
