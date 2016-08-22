@@ -3,7 +3,7 @@ gsearchBase=http://localhost:8080
 gsearchAppName=fedoragsearch
  
 gsearchUser=fgsAdmin
-gsearchPass=fgsAdmin
+gsearchPass={{ gsearch_pass }}
 finalConfigPath=/usr/share/tomcat/webapps/fedoragsearch/WEB-INF/classes
  
 logFilePath=/usr/local/fedora/server/logs
@@ -15,7 +15,7 @@ fedoraBase=http://localhost:8080
 fedoraAppName=fedora
  
 fedoraUser=fedoraAdmin
-fedoraPass=fedoraAdmin
+fedoraPass={{ fedora_pass }}
 fedoraVersion=3.8.1
  
 objectStoreBase=/usr/local/fedora/data/objectStore
