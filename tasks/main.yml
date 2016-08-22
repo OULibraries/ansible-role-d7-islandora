@@ -5,7 +5,7 @@
 - include: islandora.yml
   sudo: yes
   tags: 
-    - islandora
+    - isla
 
 - include: gsearch.yml
   sudo: yes
