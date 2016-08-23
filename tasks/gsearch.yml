@@ -126,14 +126,14 @@
 
 - name: Backup original solr schema.xml
   copy:
-    src: "{{ fedora_home }}"/solr/collection1/conf/schema.xml
-    dest: "{{ fedora_home }}"/solr/collection1/conf/schema.bak
+    src: "{{ fedora_home }}/solr/collection1/conf/schema.xml"
+    dest: "{{ fedora_home }}/solr/collection1/conf/schema.bak"
     remote_src: true
 
 - name: Copy ANT generated schema to schema.xml
   copy:
     src: /usr/share/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/conf/schema-4.2.0-for-fgs-2.7.xml
-    dest: "{{ fedroa_home }}"/solr/collection1/conf/schema.xml
+    dest: "{{ fedora_home }}/solr/collection1/conf/schema.xml"
     remote_src: true
 
 - name: Add the Solr context file
