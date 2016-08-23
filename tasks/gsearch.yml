@@ -38,7 +38,7 @@
 # Ansible copy doesn't support recusive copy of directories
 - name: Copy solr example files to the new directory
   shell: >
-    cp --recursive -v /tmp/downloads/solr-4.2.0/example/solr/ "{{ fedora_home }}/solr/"
+    cp --recursive -v /tmp/downloads/solr-4.2.0/example/solr "{{ fedora_home }}/solr/"
 
 - name: Copy solr to Tomcat Webapps Directory
   copy:
@@ -126,14 +126,14 @@
 
 - name: Backup original solr schema.xml
   copy:
-    src: /usr/local/fedora/solr/collection1/conf/schema.xml
-    dest: /usr/local/fedora/solr/collection1/conf/schema.bak
+    src: "{{ fedora_home }}"/solr/collection1/conf/schema.xml
+    dest: "{{ fedora_home }}"/solr/collection1/conf/schema.bak
     remote_src: true
 
 - name: Copy ANT generated schema to schema.xml
   copy:
     src: /usr/share/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/conf/schema-4.2.0-for-fgs-2.7.xml
-    dest: /usr/local/fedora/solr/collection1/conf/schema.xml
+    dest: "{{ fedroa_home }}"/solr/collection1/conf/schema.xml
     remote_src: true
 
 - name: Add the Solr context file
