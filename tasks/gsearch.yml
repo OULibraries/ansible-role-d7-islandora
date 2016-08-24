@@ -38,7 +38,7 @@
 # Ansible copy doesn't support recusive copy of directories
 - name: Copy solr example files to the new directory
   shell: >
-    cp --recursive -v /tmp/downloads/solr-4.2.0/example/solr "{{ fedora_home }}/solr/"
+    cp --recursive -v /tmp/downloads/solr-4.2.0/example/solr "{{ fedora_home }}"
 
 - name: Copy solr to Tomcat Webapps Directory
   copy:
