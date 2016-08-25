@@ -21,6 +21,21 @@ projects[islandora_solr_search][download][type] = "git"
 projects[islandora_solr_search][download][url] = "https://github.com/Islandora/islandora_solr_search.git"
 projects[islandora_solr_search][download][tag] = "7.x-1.7"
 
+projects[php_lib][type] = "module"
+projects[php_lib][download][type] = "git"
+projects[php_lib][download][url] = "https://github.com/Islandora/php_lib.git"
+projects[php_lib][download][tag] = "7.x-1.7"
+
+projects[objective_forms][type] = "module"
+projects[objective_forms][download][type] = "git"
+projects[objective_forms][download][url] = "https://github.com/Islandora/objective_forms.git"
+projects[objective_forms][download][tag] = "7.x-1.7"
+
+projects[islandora_xml_forms][type] = "module"
+projects[islandora_xml_forms][download][type] = "git"
+projects[islandora_xml_forms][download][url] = "https://github.com/Islandora/islandora_xml_forms.git"
+projects[islandora_xml_forms][download][tag] = "7.x-1.7"
+
 projects[islandora_solution_pack_collection][type] = "module"
 projects[islandora_solution_pack_collection][download][type] = "git"
 projects[islandora_solution_pack_collection][download][url] = "https://github.com/Islandora/islandora_solution_pack_collection.git"
