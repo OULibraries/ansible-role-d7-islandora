@@ -47,10 +47,15 @@
     timeout: 90
     echo: yes
 
+- name: Install libxml2 version 2.7
+  yum:
+    name: libxml2
+    state: latest
+
 - name: Run  drush make file
-  shell:  >
-    /vagrant/roles/OULibraries.d7/files/d7_make.sh /srv/repository https://raw.githubusercontent.com/OULibraries/ansible-role-d7-islandora/master/files/repo.make
-  ignore_errors: yes 
+  raw: >
+    /vagrant/roles/OULibraries.d7/files/d7_make.sh /srv/repository file:///vagrant/roles/OULibraries.d7-islandora/files/repo.make # https://raw.githubusercontent.com/OULibraries/ansible-role-d7-islandora/master/files/repo.make
+  ignore_errors: yes
 
 - name: Ensure /opt/oulib/island/bin exists
   file:
