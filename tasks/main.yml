@@ -2,10 +2,6 @@
 - include: yum.yml
   sudo: yes
 
-- include: islandora.yml
-  sudo: yes
-  tags: 
-    - isla
 
 - include: gsearch.yml
   sudo: yes
@@ -16,3 +12,8 @@
   sudo: yes
   tags:
     - djatoka
+
+- include: islandora.yml
+  sudo: yes
+  tags: 
+    - isla
