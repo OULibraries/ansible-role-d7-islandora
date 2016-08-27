@@ -1,12 +1,11 @@
 ---
-- name: Download djatoka from Sourceforge
+- name: Download Djatoka from Sourceforge.
   get_url:
     url: "https://sourceforge.net/projects/djatoka/files/djatoka/1.1/adore-djatoka-1.1.tar.gz"
     timeout: 90
     dest: "/tmp/downloads/adore-djatoka-1.1.tar.gz"
 
-
-- name: Create parent for Djatoka installation (/opt/adore)
+- name: Create a home for our Djatoka installation (/opt/adore)
   file:
     path: /opt/adore/
     state: directory
@@ -21,7 +20,7 @@
     creates: "/opt/adore/adore-djatoka-1.1/README.txt"
     remote_src: yes
 
-- name: Build link for /opt/adore/djatoka
+- name: Add symlink at /opt/adore/djatoka
   file:
     state: link
     force: true
