@@ -1,5 +1,4 @@
 ---
-
 - name: Download djatoka from Sourceforge
   get_url:
     url: "https://sourceforge.net/projects/djatoka/files/djatoka/1.1/adore-djatoka-1.1.tar.gz"
@@ -12,70 +11,78 @@
     dest: "/tmp/downloads"
     remote_src: yes
     
-- name: Install djatoka installation directory
-  tags: djatoka
+- name: Create parent for djatoka installation (/opt/adore)
   file:
-    path: /opt/djatoka/
+    path: /opt/adore/
     state: directory
     owner: tomcat
     group: tomcat
     mode: 0755
     
-- name: Copy solr example files to the new directory
-  tags: djatoka
+- name: Install djatoka files
   shell: >
-    cp --recursive -v /tmp/downloads/adore-djatoka-1.1 "/opt/djatoka"
+    cp --recursive -v /tmp/downloads/adore-djatoka-1.1 "/opt/adore/"
 
-- name: Modify the Tomcat startup.sh script
-  blockinfile:
-    dest: /usr/share/tomcat/bin/startup.sh
-    insertafter: EOF
-    block: |
-      . /opt/djatoka/bin/env.sh
-      export JAVA_OPTS
-      echo $JAVA_OPTS
-      exec "$PRGDIR"/"$EXECUTABLE" start "$@"
-      
-- name: Backup original djatoka env.sh
+- name: Build link for /opt/adore/djatoka
+  file:
+    state: link
+    force: true
+    src: /opt/adore/adore-djatoka-1.1
+    dest: /opt/adore/djatoka
+
+- name: Copy Djatoka war to tomcat/webapps
   copy:
-    src: "/opt/djatoka/bin/env.sh"
-    dest: "/opt/djatoka/bin/env.sh.bak"
-    remote_src: true
-      
-- name: Configure djatoka env.sh
+    src: "/opt/adore/djatoka/dist/adore-djatoka.war"
+    dest: "/usr/share/tomcat/webapps/adore-djatoka.war"
+    remote_src: true 
+
+- name: Configure Tomcat environment
   template:
-    src: "env.sh.j2"
-    dest: "/opt/djatoka/bin/env.sh"
-    owner: "tomcat"
-    group: "tomcat"
-    
-- name: Set up Djatoka log files
+    src: tomcat.conf.j2
+    dest: /etc/tomcat/tomcat.conf
+    owner: tomcat
+    group: tomcat
+
+- name: Restart Tomcat to deploy Djatoka
+  service:
+    name: "tomcat"
+    state: "restarted"
+
+- name: Pause while Tomcat restarts
+  wait_for:
+    port: 8080
+    delay: 10
+
+- name: Configure log4j for Djatoka
+  copy:
+    src: djatoka-log4j.properties
+    dest: /usr/share/tomcat/webapps/adore-djatoka/WEB-INF/classes/log4j.properties
+    owner: tomcat
+    group: tomcat
+
+- name: Configure Kakadu libraries
   lineinfile:
-      dest: /opt/djatoka/bin/log4j.properties
-      insertafter: EOF
-      line: log.dir=/usr/local/fedora/server/logs/
+    dest: /etc/ld.so.conf.d/kdu_libs.conf
+    insertafter: EOF
+    create: yes
+    line:  /opt/adore/djatoka/lib/Linux-x86-64
       
-- name: Accommodating viewing restrictions for djatoka
-  template:
-    src: "web.xml.j2"
-    dest: "/usr/share/tomcat/webapps/fedora/WEB-INF/web.xml"
-    owner: "tomcat"
-    group: "tomcat"
+# - name: Accommodating viewing restrictions for djatoka
+#   template:
+#     src: "web.xml.j2"
+#     dest: "/usr/share/tomcat/webapps/fedora/WEB-INF/web.xml"
+#     owner: "tomcat"
+#     group: "tomcat"
     
-- name: Modify Drupal filter configuration
-  blockinfile:
-    dest: "/usr/local/fedora/server/config/filter-drupal.xml"
-    block: |
-      <service_requests>
-        <service name="djatoka">
-        <allowed_ips>local</allowed_ips>
-        <allowed_uri_pattern>^.*/(JP2\|TEI)$</allowed_uri_pattern>
-        <roles>administrator fedora_anonymous</roles>
-        </service>
-      </service_requests>
+# - name: Modify Drupal filter configuration
+#   blockinfile:
+#     dest: "/usr/local/fedora/server/config/filter-drupal.xml"
+#     block: |
+#       <service_requests>
+#         <service name="djatoka">
+#         <allowed_ips>local</allowed_ips>
+#         <allowed_uri_pattern>^.*/(JP2\|TEI)$</allowed_uri_pattern>
+#         <roles>administrator fedora_anonymous</roles>
+#         </service>
+#       </service_requests>
     
-- name: Restart tomcat for djatoka
-  command: "{{ item }}"
-  with_items:
-    - /usr/share/tomcat/bin/shutdown.sh
-    - /usr/share/tomcat/bin/startup.sh
