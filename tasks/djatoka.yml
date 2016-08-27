@@ -4,14 +4,9 @@
     url: "https://sourceforge.net/projects/djatoka/files/djatoka/1.1/adore-djatoka-1.1.tar.gz"
     timeout: 90
     dest: "/tmp/downloads/adore-djatoka-1.1.tar.gz"
-    
-- name: UnArchive djatoka
-  unarchive: 
-    src: "/tmp/downloads/adore-djatoka-1.1.tar.gz"
-    dest: "/tmp/downloads"
-    remote_src: yes
-    
-- name: Create parent for djatoka installation (/opt/adore)
+
+
+- name: Create parent for Djatoka installation (/opt/adore)
   file:
     path: /opt/adore/
     state: directory
@@ -19,9 +14,12 @@
     group: tomcat
     mode: 0755
     
-- name: Install djatoka files
-  shell: >
-    cp --recursive -v /tmp/downloads/adore-djatoka-1.1 "/opt/adore/"
+- name: Install Djatoka files
+  unarchive: 
+    src: "/tmp/downloads/adore-djatoka-1.1.tar.gz"
+    dest: "/opt/adore"
+    creates: "/opt/adore/adore-djatoka-1.1/README.txt"
+    remote_src: yes
 
 - name: Build link for /opt/adore/djatoka
   file:
