@@ -63,7 +63,15 @@
     insertafter: EOF
     create: yes
     line:  /opt/adore/djatoka/lib/Linux-x86-64
-      
+
+- name: Symlink kdu_compress command
+  file:
+    src: /opt/adore/djatoka/bin/Linux-x86-64/kdu_compress
+    dest: /usr/local/bin/kdu_compress
+    state: link
+
+
+    
 # - name: Accommodating viewing restrictions for djatoka
 #   template:
 #     src: "web.xml.j2"
