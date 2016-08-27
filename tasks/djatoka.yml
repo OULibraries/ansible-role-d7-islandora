@@ -48,10 +48,9 @@
     name: "tomcat"
     state: "restarted"
 
-- name: Pause while Tomcat restarts
+- name: Pause while Djatoka deploys
   wait_for:
-    port: 8080
-    delay: 10
+    path: /usr/share/tomcat/webapps/adore-djatoka/WEB-INF/classes
 
 - name: Configure log4j for Djatoka
   copy:
