@@ -1,1 +1,89 @@
 ---
+- name: Download Djatoka from Sourceforge.
+  get_url:
+    url: "https://sourceforge.net/projects/djatoka/files/djatoka/1.1/adore-djatoka-1.1.tar.gz"
+    timeout: 90
+    dest: "/tmp/downloads/adore-djatoka-1.1.tar.gz"
+
+- name: Create a home for our Djatoka installation (/opt/adore)
+  file:
+    path: /opt/adore/
+    state: directory
+    owner: tomcat
+    group: tomcat
+    mode: 0755
+
+- name: Install Djatoka files
+  unarchive:
+    src: "/tmp/downloads/adore-djatoka-1.1.tar.gz"
+    dest: "/opt/adore"
+    creates: "/opt/adore/adore-djatoka-1.1/README.txt"
+    remote_src: yes
+
+- name: Add symlink at /opt/adore/djatoka
+  file:
+    state: link
+    force: true
+    src: /opt/adore/adore-djatoka-1.1
+    dest: /opt/adore/djatoka
+
+- name: Copy Djatoka war to tomcat/webapps
+  copy:
+    src: "/opt/adore/djatoka/dist/adore-djatoka.war"
+    dest: "/usr/share/tomcat/webapps/adore-djatoka.war"
+    remote_src: true
+
+- name: Configure Tomcat environment
+  template:
+    src: tomcat.conf.j2
+    dest: /etc/tomcat/tomcat.conf
+    owner: tomcat
+    group: tomcat
+
+- name: Restart Tomcat to deploy Djatoka
+  service:
+    name: "tomcat"
+    state: "restarted"
+
+- name: Pause while Djatoka deploys
+  wait_for:
+    path: /usr/share/tomcat/webapps/adore-djatoka/WEB-INF/classes
+
+- name: Configure log4j for Djatoka
+  copy:
+    src: djatoka-log4j.properties
+    dest: /usr/share/tomcat/webapps/adore-djatoka/WEB-INF/classes/log4j.properties
+    owner: tomcat
+    group: tomcat
+
+- name: Configure Kakadu libraries
+  lineinfile:
+    dest: /etc/ld.so.conf.d/kdu_libs.conf
+    insertafter: EOF
+    create: yes
+    line: /opt/adore/djatoka/lib/Linux-x86-64
+
+- name: Symlink kdu_compress command
+  file:
+    src: /opt/adore/djatoka/bin/Linux-x86-64/kdu_compress
+    dest: /usr/local/bin/kdu_compress
+    state: link
+
+# - name: Accommodating viewing restrictions for djatoka
+#   template:
+#     src: "web.xml.j2"
+#     dest: "/usr/share/tomcat/webapps/fedora/WEB-INF/web.xml"
+#     owner: "tomcat"
+#     group: "tomcat"
+
+# - name: Modify Drupal filter configuration
+#   blockinfile:
+#     dest: "/usr/local/fedora/server/config/filter-drupal.xml"
+#     block: |
+#       <service_requests>
+#         <service name="djatoka">
+#         <allowed_ips>local</allowed_ips>
+#         <allowed_uri_pattern>^.*/(JP2\|TEI)$</allowed_uri_pattern>
+#         <roles>administrator fedora_anonymous</roles>
+#         </service>
+#       </service_requests>
