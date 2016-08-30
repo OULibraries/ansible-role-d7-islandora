@@ -36,7 +36,7 @@
 
 - name: Install the repository Drupal site
   expect:
-    command: /vagrant/roles/OULibraries.d7/files/d7_init.sh /srv/repository
+    command: d7_init.sh /srv/repository
     responses:
       'Enter host suffix:': ''  # take default  setting
       'Enter MYSQL host name:': '' # take default  setting
@@ -47,6 +47,13 @@
     timeout: 90
     echo: yes
 
+- name: Proxy djatoka from tomcat server
+  blockinfile:
+    dest: "/srv/{{ islandora_site }}/etc/srv_{{ islandora_site }}.conf"
+    block: |
+      ProxyPass /adore-djatoka http://localhost:8080/adore-djatoka
+      ProxyPassReverse /adore-djatoka http://localhost:8080/adore-djatoka
+
 - name: Install libxml2 version 2.7
   yum:
     name: libxml2
@@ -54,7 +61,7 @@
 
 - name: Run  drush make file
   shell: >
-    /vagrant/roles/OULibraries.d7/files/d7_make.sh /srv/repository file:///vagrant/roles/OULibraries.d7-islandora/files/repo.make 
+    d7_make.sh /srv/{{ islandora_site }}  {{ islandora_makefile }}
   ignore_errors: yes
 
 - name: Ensure /opt/oulib/island/bin exists
@@ -82,3 +89,8 @@
 
 - name: Run repo.enable.sh
   command: /opt/oulib/island/bin/repo.enable.sh
+
+
+
+
+  

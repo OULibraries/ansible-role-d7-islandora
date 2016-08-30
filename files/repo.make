@@ -42,7 +42,6 @@ projects[islandora_openseadragon][download][type] = "git"
 projects[islandora_openseadragon][download][url] = "https://github.com/Islandora/islandora_openseadragon.git"
 projects[islandora_openseadragon][download][tag] = "7.x-1.7"
 
-
 projects[islandora_solution_pack_collection][type] = "module"
 projects[islandora_solution_pack_collection][download][type] = "git"
 projects[islandora_solution_pack_collection][download][url] = "https://github.com/Islandora/islandora_solution_pack_collection.git"
@@ -58,13 +57,39 @@ projects[islandora_solution_pack_large_image][download][type] = "git"
 projects[islandora_solution_pack_large_image][download][url] = "https://github.com/Islandora/islandora_solution_pack_large_image.git"
 projects[islandora_solution_pack_large_image][download][tag] = "7.x-1.7"
 
+projects[islandora_paged_content][type] = "module"
+projects[islandora_paged_content][download][type] = "git"
+projects[islandora_paged_content][download][url] = "https://github.com/Islandora/islandora_paged_content.git"
+projects[islandora_paged_content][download][tag] = "7.x-1.7"
+
+projects[islandora_solution_pack_book][type] = "module"
+projects[islandora_solution_pack_book][download][type] = "git"
+projects[islandora_solution_pack_book][download][url] = "https://github.com/Islandora/islandora_solution_pack_book.git"
+
+
+
+projects[islandora_batch][type] = "module"
+projects[islandora_batch][download][type] = "git"
+projects[islandora_batch][download][url] = "https://github.com/Islandora/islandora_batch.git"
+projects[islandora_batch][download][tag] = "7.x-1.7"
+
+projects[islandora_book_batch][type] = "module"
+projects[islandora_book_batch][download][type] = "git"
+projects[islandora_book_batch][download][url] = "https://github.com/Islandora/islandora_book_batch.git"
+projects[islandora_book_batch][download][tag] = "7.x-1.7"
+
+
+projects[islandora_scg][type] = "module"
+projects[islandora_scg][download][type] = "git"
+projects[islandora_scg][download][url] = "https://github.com/Islandora/islandora_scg.git"
+
+
+
 ; Libraries
 libraries[tuque][type] = "library"
 libraries[tuque][download][type] = "git"
 libraries[tuque][download][url] = "https://github.com/Islandora/tuque.git"
 libraries[tuque][download][tag] = "7.x-1.7"
-
-
 
 libraries[openseadragon][type] = "library"
 libraries[openseadragon][download][type] = "get"
