@@ -36,6 +36,13 @@ projects[islandora_xml_forms][download][type] = "git"
 projects[islandora_xml_forms][download][url] = "https://github.com/Islandora/islandora_xml_forms.git"
 projects[islandora_xml_forms][download][tag] = "7.x-1.7"
 
+
+projects[islandora_openseadragon][type] = "module"
+projects[islandora_openseadragon][download][type] = "git"
+projects[islandora_openseadragon][download][url] = "https://github.com/Islandora/islandora_openseadragon.git"
+projects[islandora_openseadragon][download][tag] = "7.x-1.7"
+
+
 projects[islandora_solution_pack_collection][type] = "module"
 projects[islandora_solution_pack_collection][download][type] = "git"
 projects[islandora_solution_pack_collection][download][url] = "https://github.com/Islandora/islandora_solution_pack_collection.git"
@@ -56,3 +63,10 @@ libraries[tuque][type] = "library"
 libraries[tuque][download][type] = "git"
 libraries[tuque][download][url] = "https://github.com/Islandora/tuque.git"
 libraries[tuque][download][tag] = "7.x-1.7"
+
+
+
+libraries[openseadragon][type] = "library"
+libraries[openseadragon][download][type] = "get"
+libraries[openseadragon][download][url] = "http://openseadragon.github.io/releases/openseadragon-bin-0.9.129.zip"
+libraries[openseadragon][directory_name] ="openseadragon"
