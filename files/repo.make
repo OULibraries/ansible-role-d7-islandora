@@ -81,7 +81,7 @@ projects[islandora_book_batch][download][tag] = "7.x-1.7"
 
 projects[islandora_scg][type] = "module"
 projects[islandora_scg][download][type] = "git"
-projects[islandora_scg][download][url] = "https://github.com/Islandora/islandora_scg.git"
+projects[islandora_scg][download][url] = "https://github.com/mjordan/islandora_scg.git"
 
 
 
