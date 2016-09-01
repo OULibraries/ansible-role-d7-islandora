@@ -10,15 +10,18 @@ drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora islandora_basic_collection php_l
 drush -r "$ISLANDORA_ROOT" -y -u 1 en objective_forms xml_forms xml_form_builder xml_schema_api xml_form_elements xml_form_api 
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_solr islandora_solr_config
 
+# Repository access control will happen in XACML, so we open things up in Drupal
+drush -r "$ISLANDORA_ROOT" -y -u 1 role-add-perm 'anonymous user' 'view repository objects'
+drush -r "$ISLANDORA_ROOT" -y -u 1 role-add-perm 'authenticated user' 'view repository objects'
 
 # Basic Image and Large Image
 drush -r "$ISLANDORA_ROOT" -y -u 1 en imagemagick islandora_basic_image islandora_large_image islandora_openseadragon
-drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_book_page_viewers', array('name' => array('none' => 'none', 'islandora_openseadragon' => 'islandora_openseadragon'), 'default' => 'islandora_openseadragon'))"
-
-
-# Book
-drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_paged_content islandora_book
+drush -r "$ISLANDORA_ROOT" eval "variable_set('image_toolkit', 'imagemagick')"
+drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_use_kakadu', TRUE)"
+drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_kakadu_url', '/usr/local/bin/kdu_compress')"
 drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_large_image_viewers', array('name' => array('none' => 'none', 'islandora_openseadragon' => 'islandora_openseadragon'), 'default' => 'islandora_openseadragon'))"
 
-# Sample Content Generator
-drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_batch islandora_book_batch islandora_scg
+# Book
+drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_paged_content islandora_book islandora_internet_archive_bookreader
+drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_book_page_viewers', array('name' => array('none' => 'none', 'islandora_openseadragon' => 'islandora_openseadragon'), 'default' => 'islandora_openseadragon'))"
+drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_book_viewers', array('name' => array('none' => 'none', 'islandora_internet_archive_bookreader' => 'islandora_internet_archive_bookreader'), 'default' => 'islandora_internet_archive_bookreader'))"
