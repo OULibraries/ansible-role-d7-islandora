@@ -116,6 +116,12 @@
     src: /tmp/downloads/apache-ant-1.9.7-bin.tar.gz
     dest: /opt/apache
 
+# - name: Install maven
+#   tags: ant
+#   unarchive:
+#     src: http://apache.mesi.com.ar/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
+#     dest: /opt/apache
+    
 - name: Build link to /usr/bin/ant
   tags: ant
   file:
