@@ -47,7 +47,6 @@
     timeout: 90
     echo: yes
 
-
 - name: Proxy djatoka from tomcat and rewrite rft_id because djatoka is terrible
   blockinfile:
     dest: "/srv/{{ islandora_site }}/etc/srv_{{ islandora_site }}.conf"
@@ -74,11 +73,6 @@
   service:
     name: "httpd"
     state: "restarted"
-
-- name: Install libxml2 version 2.7
-  yum:
-    name: libxml2
-    state: latest
 
 - name: Run  drush make file
   shell: >

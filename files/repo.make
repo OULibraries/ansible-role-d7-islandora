@@ -88,6 +88,11 @@ libraries[openseadragon][download][type] = "get"
 libraries[openseadragon][download][url] = "http://openseadragon.github.io/releases/openseadragon-bin-0.9.129.zip"
 libraries[openseadragon][directory_name] ="openseadragon"
 
+libraries[colorboxy][type] = "library"
+libraries[colorboxy][download][type] = "get"
+libraries[colorboxy][download][url] = "https://github.com/jackmoore/colorbox/archive/1.x.zip"
+libraries[colorboxy][directory_name] ="colorboxy"
+
 libraries[bookreader][type] = "library"
 libraries[bookreader][download][type] = "git"
 libraries[bookreader][download][url] = "https://github.com/Islandora/internet_archive_bookreader"

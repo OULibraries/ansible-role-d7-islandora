@@ -26,3 +26,6 @@ drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_large_image_viewers', a
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_paged_content islandora_book islandora_internet_archive_bookreader
 drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_book_page_viewers', array('name' => array('none' => 'none', 'islandora_openseadragon' => 'islandora_openseadragon'), 'default' => 'islandora_openseadragon'))"
 drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_book_viewers', array('name' => array('none' => 'none', 'islandora_internet_archive_bookreader' => 'islandora_internet_archive_bookreader'), 'default' => 'islandora_internet_archive_bookreader'))"
+drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_paged_content_djatoka_url', '/adore-djatoka')"
+drush -r "$ISLANDORA_ROOT" eval "variable_set('islandora_book_ingest_derivatives', array( 'pdf' => 'pdf', 'image' => 'image', 'ocr' => 0 ))"
+
