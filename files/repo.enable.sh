@@ -11,8 +11,8 @@ drush -r "$ISLANDORA_ROOT" -y -u 1 en objective_forms xml_forms xml_form_builder
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_solr islandora_solr_config
 
 # Repository access control will happen in XACML, so we open things up in Drupal
-drush -r "$ISLANDORA_ROOT" -y -u 1 role-add-perm 'anonymous user' 'view repository objects'
-drush -r "$ISLANDORA_ROOT" -y -u 1 role-add-perm 'authenticated user' 'view repository objects'
+drush -r "$ISLANDORA_ROOT" -y -u 1 role-add-perm 'anonymous user' 'view fedora repository objects'
+drush -r "$ISLANDORA_ROOT" -y -u 1 role-add-perm 'authenticated user' 'view fedora repository objects'
 
 # Basic Image and Large Image
 drush -r "$ISLANDORA_ROOT" -y -u 1 en imagemagick islandora_basic_image islandora_large_image islandora_openseadragon
