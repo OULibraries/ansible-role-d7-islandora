@@ -10,9 +10,6 @@ drush -r "$ISLANDORA_ROOT" -y -u 1 en jquery_update bootstrap oulib_repository
 drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('theme_default','oulib_repository')"
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora islandora_basic_collection php_lib
 
-# URIs
-drush -r "$ISLANDORA_ROOT" -y -u 1 en pathauto subpathauto islandora_pathauto
-
 # Solr, forms, and metadata
 drush -r "$ISLANDORA_ROOT" -y -u 1 en objective_forms xml_forms xml_form_builder xml_schema_api xml_form_elements xml_form_api islandora_marcxml
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_solr islandora_solr_config
@@ -36,4 +33,12 @@ drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('islandora_book_viewers', 
 drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('islandora_paged_content_djatoka_url', '/adore-djatoka')"
 # no OCR because we don't do tesseract yet
 drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('islandora_book_ingest_derivatives', array( 'pdf' => 'pdf', 'image' => 'image', 'ocr' => 0 ))"
+
+# URIs
+drush -r "$ISLANDORA_ROOT" -y -u 1 en pathauto subpathauto islandora_pathauto
+drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('islandora_pathauto_selected_cmodels', array( 0 => 'islandora:pageCModel', 1 => 'islandora:bookCModel',  2 => 'islandora:sp_large_image_cmodel') )"
+drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('pathauto_islandora_islandora:bookCModel_pattern', '/uuid/[fedora:shortpid]')"
+drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('pathauto_islandora_islandora:pageCModel_pattern', '/uuid/[fedora:shortpid]')"
+drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('pathauto_islandora_islandora:sp_large_image_cmodel_pattern', '/uuid/[fedora:shortpid]')"
+drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('subpathauto_depth', 4)"
 
