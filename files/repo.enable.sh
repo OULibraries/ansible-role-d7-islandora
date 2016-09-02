@@ -7,7 +7,7 @@ ISLANDORA_ROOT="/srv/repository/drupal"
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora islandora_basic_collection php_lib
 
 # Solr, forms, and metadata
-drush -r "$ISLANDORA_ROOT" -y -u 1 en objective_forms xml_forms xml_form_builder xml_schema_api xml_form_elements xml_form_api 
+drush -r "$ISLANDORA_ROOT" -y -u 1 en objective_forms xml_forms xml_form_builder xml_schema_api xml_form_elements xml_form_api islandora_marcxml
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_solr islandora_solr_config
 
 # Repository access control will happen in XACML, so we open things up in Drupal

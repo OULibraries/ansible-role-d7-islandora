@@ -7,7 +7,8 @@ projects[drupal][version] = "7.50"
 ; drupal.org  Modules
 
 projects[imagemagick][version] = "1.0"
-projects[colorbox]
+projects[libraries][version] = "2.3"
+projects[colorbox][version] = "2.12"
 
 ; Islandora modules
 
@@ -36,6 +37,10 @@ projects[islandora_xml_forms][download][type] = "git"
 projects[islandora_xml_forms][download][url] = "https://github.com/Islandora/islandora_xml_forms.git"
 projects[islandora_xml_forms][download][tag] = "7.x-1.7"
 
+projects[islandora_marcxml][type] = "module"
+projects[islandora_marcxml][download][type] = "git"
+projects[islandora_marcxml][download][url] = "https://github.com/Islandora/islandora_marcxml.git"
+projects[islandora_marcxml][download][tag] = "7.x-1.7"
 
 projects[islandora_openseadragon][type] = "module"
 projects[islandora_openseadragon][download][type] = "git"
@@ -84,7 +89,7 @@ libraries[openseadragon][download][url] = "http://openseadragon.github.io/releas
 libraries[openseadragon][directory_name] ="openseadragon"
 
 libraries[bookreader][type] = "library"
-libraries[bookreader][download][type] = "get"
+libraries[bookreader][download][type] = "git"
 libraries[bookreader][download][url] = "https://github.com/Islandora/internet_archive_bookreader"
 libraries[bookreader][download][tag] ="7.x-1.7"
 libraries[bookreader][directory_name] ="bookreader"
