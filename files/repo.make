@@ -9,6 +9,17 @@ projects[drupal][version] = "7.50"
 projects[imagemagick][version] = "1.0"
 projects[libraries][version] = "2.3"
 projects[colorbox][version] = "2.12"
+projects[jquery_update][version] = "2.7"
+projects[libraries][version] = "2.3"
+
+; Themes
+projects[bootstrap][version] = "3.6"
+
+projects[oulib_repositorytheme][type] = "theme"
+projects[oulib_repositorytheme][download][type] = "git"
+projects[oulib_repositorytheme][download][url] = "https://github.com/OULibraries/oulib_repositorytheme.git"
+
+
 
 ; Islandora modules
 
