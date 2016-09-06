@@ -11,15 +11,15 @@
     owner: "tomcat"
     group: "tomcat"
 
-- name: Let Fedora know aobut the Islandora Drupal Filter 
-  copy: 
+- name: Let Fedora know aobut the Islandora Drupal Filter
+  copy:
     src: "jaas.conf"
     dest: "{{fedora_home}}/server/config/jaas.conf"
     owner: "tomcat"
     group: "tomcat"
 
-- name: Configure the Islandora Drupal Filter 
-  template: 
+- name: Configure the Islandora Drupal Filter
+  template:
     src: "filter-drupal.xml.j2"
     dest: "{{fedora_home}}/server/config/filter-drupal.xml"
     owner: "tomcat"
@@ -36,25 +36,47 @@
 
 - name: Install the repository Drupal site
   expect:
-    command: /vagrant/roles/OULibraries.d7/files/d7_init.sh /srv/repository
+    command: /opt/d7/bin/d7_init.sh /srv/{{ islandora_site }}
     responses:
-      'Enter host suffix:': ''  # take default  setting
-      'Enter MYSQL host name:': '' # take default  setting
-      'Enter MYSQL host port:': '' # take default  setting
-      'Enter MYSQL user:': ''  # take default  setting
+      'Enter host suffix:': ''   # take default  setting
+      'Enter MYSQL host name:': ''  # take default  setting
+      'Enter MYSQL host port:': ''  # take default  setting
+      'Enter MYSQL user:': ''   # take default  setting
       'Enter MYSQL password:': '{{ mariadb_root_pass }}'
     creates: /srv/repository
     timeout: 90
     echo: yes
 
-- name: Install libxml2 version 2.7
-  yum:
-    name: libxml2
-    state: latest
+- name: Proxy djatoka from tomcat and rewrite rft_id because djatoka is terrible
+  blockinfile:
+    dest: "/srv/{{ islandora_site }}/etc/srv_{{ islandora_site }}.conf"
+    insertbefore: "</VirtualHost>"
+    block: |
+      RewriteEngine on
+      RewriteCond %{QUERY_STRING} ^(.*)rft_id=https%3A%2F%2F{{ islandora_site }}.{{ httpd_dn_suffix }}(.*)$
+      RewriteRule ^/adore-djatoka/resolver.*$ /adore-djatoka/resolver?%1rft_id=http://localhost%2 [L,PT]
+      ProxyPass /adore-djatoka http://localhost:8080/adore-djatoka
+      ProxyPassReverse /adore-djatoka http://localhost:8080/adore-djatoka
+
+- name: loopback proxy from https to http because djatoka is terrible
+  blockinfile:
+    dest: "/etc/httpd/conf.d/apc.conf"
+    insertbefore: "</VirtualHost>"
+    block: |
+       SSLProxyEngine on
+       SSLProxyCheckPeerCN Off
+       SSLProxyCheckPeerName Off
+       ProxyPass /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
+       ProxyPassReverse /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
+
+- name: Restart apache
+  service:
+    name: "httpd"
+    state: "restarted"
 
 - name: Run  drush make file
   shell: >
-    /vagrant/roles/OULibraries.d7/files/d7_make.sh /srv/repository file:///vagrant/roles/OULibraries.d7-islandora/files/repo.make 
+    /opt/d7/bin/d7_make.sh /srv/{{ islandora_site }}  {{ islandora_makefile }}
   ignore_errors: yes
 
 - name: Ensure /opt/oulib/island/bin exists
@@ -77,7 +99,7 @@
     group: wheel
   with_items:
     - repo.enable.sh
-  tags: 
+  tags:
     - assets
 
 - name: Run repo.enable.sh

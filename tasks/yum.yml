@@ -4,5 +4,7 @@
     name: "{{ item }}"
     state: present
   with_items:
-  - php
-  - ImageMagick
+    - php
+    - ImageMagick
+    - libxml2
+    - poppler-utils
