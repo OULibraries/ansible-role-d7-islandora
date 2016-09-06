@@ -11,15 +11,21 @@ projects[libraries][version] = "2.3"
 projects[colorbox][version] = "2.12"
 projects[jquery_update][version] = "2.7"
 projects[libraries][version] = "2.3"
+projects[link][version] = "7.x-1.3"
+projects[themekey][version] = "7.x-3.4"
+projects[oembed][version] = "7.x-0.1-beta3"
 
 ; Themes
 projects[bootstrap][version] = "3.6"
+projects[entity_iframe_theme][version] = "1.0"
 
 projects[oulib_repositorytheme][type] = "theme"
 projects[oulib_repositorytheme][download][type] = "git"
 projects[oulib_repositorytheme][download][url] = "https://github.com/OULibraries/oulib_repositorytheme.git"
 
-
+projects[islandora_embed_theme][type] = "theme"
+projects[islandora_embed_theme][download][type] = "git"
+projects[islandora_embed_theme][download][url] = "https://github.com/OULibraries/islandora_embed_theme.git"
 
 ; Islandora modules
 
@@ -87,6 +93,11 @@ projects[islandora_internet_archive_bookreader][type] = "module"
 projects[islandora_internet_archive_bookreader][download][type] = "git"
 projects[islandora_internet_archive_bookreader][download][url] = "https://github.com/Islandora/islandora_internet_archive_bookreader.git"
 projects[islandora_internet_archive_bookreader][download][tag] = "7.x-1.7"
+
+projects[islandora_embed][type] = "module"
+projects[islandora_embed][download][type] = "git"
+projects[islandora_embed][download][url] = "https://github.com/OULibraries/islandora_embed.git"
+projects[islandora_embed][download][tag] = "7.x-1.7"
 
 ; Libraries
 libraries[tuque][type] = "library"

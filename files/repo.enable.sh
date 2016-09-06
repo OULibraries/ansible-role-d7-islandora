@@ -34,3 +34,5 @@ drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('islandora_book_viewers', 
 drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('islandora_paged_content_djatoka_url', '/adore-djatoka')"
 drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('islandora_book_ingest_derivatives', array( 'pdf' => 'pdf', 'image' => 'image', 'ocr' => 0 ))"
 
+# Islandora oEmbed set up
+dirush -r "$ISLANDORA_ROOT" -y -u 1 en link oembed themekey islandora_embed islandora_embed_theme entity_iframe_theme oembed_provider
