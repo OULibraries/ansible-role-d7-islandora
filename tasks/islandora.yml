@@ -68,6 +68,8 @@
        SSLProxyCheckPeerName Off
        ProxyPass /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
        ProxyPassReverse /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
+       ProxyPass /uuid https://{{ islandora_site}}.{{ httpd_dn_suffix }}/uuid
+       ProxyPassReverse /uuid https://{{ islandora_site}}.{{ httpd_dn_suffix }}/uuid
 
 - name: Restart apache
   service:
