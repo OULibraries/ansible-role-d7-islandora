@@ -52,6 +52,7 @@
 
 - name: Insert "fgsAdmin" user in fedora-users.xml
   blockinfile:
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
     dest: /usr/local/fedora/server/config/fedora-users.xml
     block: |
       <user name="fgsAdmin" password="fgsAdmin">
