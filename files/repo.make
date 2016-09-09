@@ -99,8 +99,12 @@ projects[islandora_solution_pack_book][download][tag] = "7.x-1.7"
 
 projects[islandora_internet_archive_bookreader][type] = "module"
 projects[islandora_internet_archive_bookreader][download][type] = "git"
-projects[islandora_internet_archive_bookreader][download][url] = "https://github.com/Islandora/islandora_internet_archive_bookreader.git"
-projects[islandora_internet_archive_bookreader][download][tag] = "7.x-1.7"
+projects[islandora_internet_archive_bookreader][download][url] = "https://github.com/OULibraries/islandora_internet_archive_bookreader_temp.git"
+projects[islandora_internet_archive_bookreader][directory_name] ="islandora_internet_archive_bookreader"
+
+projects[islandora_internet_archive_bookreader_custom][type] = "module"
+projects[islandora_internet_archive_bookreader_custom][download][type] = "git"
+projects[islandora_internet_archive_bookreader_custom][download][url] = "https://github.com/OULibraries/islandora_internet_archive_bookreader_custom.git"
 
 projects[islandora_embed][type] = "module"
 projects[islandora_embed][download][type] = "git"

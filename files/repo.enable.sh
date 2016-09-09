@@ -36,12 +36,14 @@ drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('islandora_book_ingest_der
 
 
 # Islandora oEmbed set up
-drush -r "$ISLANDORA_ROOT" -y -u 1 en ctools 
+drush -r "$ISLANDORA_ROOT" -y -u 1 en ctools
+drush -r "$ISLANDORA_ROOT" -y -u 1 en link
 drush -r "$ISLANDORA_ROOT" -y -u 1 en entity_iframe_theme
-drush -r "$ISLANDORA_ROOT" -y -u 1 en link oembed oembed_provider oembed_field
+drush -r "$ISLANDORA_ROOT" -y -u 1 en oembed oembed_provider oembed_field
 drush -r "$ISLANDORA_ROOT" -y -u 1 en themekey 
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_embed
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_embed_theme
+drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_internet_archive_bookreader_custom
 
 # URIs
 drush -r "$ISLANDORA_ROOT" -y -u 1 en pathauto subpathauto islandora_pathauto
