@@ -55,7 +55,7 @@
     marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
     dest: /usr/local/fedora/server/config/fedora-users.xml
     block: |
-      <user name="fgsAdmin" password="fgsAdmin">
+      <user name="fgsAdmin" password="{{ gsearch_pass }}">
         <attribute name="fedoraRole">
           <value>administrator</value>
         </attribute>
