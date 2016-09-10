@@ -54,6 +54,7 @@
   blockinfile:
     marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
     dest: /usr/local/fedora/server/config/fedora-users.xml
+    insertbefore: </users>
     block: |
       <user name="fgsAdmin" password="{{ gsearch_pass }}">
         <attribute name="fedoraRole">
@@ -92,42 +93,9 @@
     replace: >
       \1fgsconfig-basic-for-islandora.properties\2
 
-- name: Download Ant
-  tags: ant
-  get_url:
-    url: http://mirror.ox.ac.uk/sites/rsync.apache.org/ant/binaries/apache-ant-1.9.7-bin.tar.gz
-    dest: /tmp/downloads/apache-ant-1.9.7-bin.tar.gz
-    owner: root
-    group: root
-    mode: 0644
-
-- name: Install Ant installation directory
-  tags: ant
-  file:
-    path: /opt/apache/
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-
-- name: Install Ant
-  tags: ant
-  unarchive:
-    remote_src: yes
-    src: /tmp/downloads/apache-ant-1.9.7-bin.tar.gz
-    dest: /opt/apache
-
-- name: Build link to /usr/bin/ant
-  tags: ant
-  file:
-    state: link
-    force: true
-    src: /opt/apache/apache-ant-1.9.7/bin/ant
-    dest: /usr/bin/ant
-
 - name: Build fgsconfig
   command: >
-    ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
+    /opt/apache/ant/bin/ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
 
 - name: Copy ANT generated schema to schema.xml
   copy:
@@ -147,3 +115,14 @@
   service:
     name: "tomcat"
     state: "restarted"
+
+- name: Wait for tomcat to restart    
+  wait_for:
+    port: 8080
+    delay: 5
+
+- name: Reload Solr core
+  uri:
+    url: "http://localhost:8080/solr/admin/cores?wt=json&action=RELOAD&core=collection1"
+    method: "GET"
+    status_code: 200
