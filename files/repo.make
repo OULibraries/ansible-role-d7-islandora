@@ -131,3 +131,7 @@ libraries[bookreader][download][type] = "git"
 libraries[bookreader][download][url] = "https://github.com/Islandora/internet_archive_bookreader"
 libraries[bookreader][download][tag] ="7.x-1.7"
 libraries[bookreader][directory_name] ="bookreader"
+
+libraries[bookreader][type] = "module"
+libraries[bookreader][download][type] = "git"
+libraries[bookreader][download][url] = "https://github.com/OULibraries/ou-bagit-importer.git"

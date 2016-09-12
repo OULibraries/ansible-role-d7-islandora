@@ -44,6 +44,7 @@ drush -r "$ISLANDORA_ROOT" -y -u 1 en themekey
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_embed
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_embed_theme
 drush -r "$ISLANDORA_ROOT" -y -u 1 en islandora_internet_archive_bookreader_custom
+drush -r "$ISLANDORA_ROOT" -y -u 1 en ou_bagit_importer
 
 # URIs
 drush -r "$ISLANDORA_ROOT" -y -u 1 en pathauto subpathauto islandora_pathauto
@@ -52,4 +53,3 @@ drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('pathauto_islandora_island
 drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('pathauto_islandora_islandora:pageCModel_pattern', '/uuid/[fedora:shortpid]')"
 drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('pathauto_islandora_islandora:sp_large_image_cmodel_pattern', '/uuid/[fedora:shortpid]')"
 drush -r "$ISLANDORA_ROOT" -y -u 1 eval "variable_set('subpathauto_depth', 4)"
-
