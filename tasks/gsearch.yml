@@ -29,7 +29,7 @@
     dest: /tmp/downloads
     remote_src: yes
 
-- name: Create new directory for fedora
+- name: Create new directory for Fedora Solr
   file:
     path: "{{ fedora_home }}/solr"
     state: directory
@@ -94,10 +94,14 @@
       \1fgsconfig-basic-for-islandora.properties\2
 
 - name: Build fgsconfig
+  become: yes
+  become_user: tomcat
   command: >
     /opt/apache/ant/bin/ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
 
 - name: Copy ANT generated schema to schema.xml
+  become: yes
+  become_user: tomcat
   copy:
     src: /usr/share/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/conf/schema-4.2.0-for-fgs-2.7.xml
     dest: "{{ fedora_home }}/solr/collection1/conf/schema.xml"
@@ -111,19 +115,62 @@
     owner: "tomcat"
     group: "tomcat"
 
+- name: Get Discovery Garden basic Solr config
+  git:
+    dest: /tmp/downloads/basic-solr-config
+    repo: https://github.com/discoverygarden/basic-solr-config.git
+    version: 4.x
+    recursive: yes
+    force: yes
+    # We have to force this to make it idempotent because we'll be
+    # making changes to these files. Probably we should just fork the
+    # upstream code in the near future.
+
+- name: Adjust path to Tomcat in solr transforms
+  shell: |
+    cd /tmp/downloads/basic-solr-config/islandora_transforms
+    sed -i 's#/usr/local/fedora/tomcat#/var/lib/tomcat#g' ./*xslt
+
+- name: Get Discovery Garden gsearch extensions
+  git:
+    dest: /tmp/downloads/dgi_gsearch_extensions
+    repo: https://github.com/discoverygarden/dgi_gsearch_extensions.git
+
+- name: Get Discovery Garden gsearch extensions
+  shell: |
+    cd /tmp/downloads/dgi_gsearch_extensions
+    /opt/apache/maven/bin/mvn -q package
+  args:
+    creates: /tmp/downloads/dgi_gsearch_extensions/target/gsearch_extensions-0.1.1-jar-with-dependencies.jar
+
+- name: Deploy dgi_gsearch_extensions
+  become: true
+  become_user: tomcat
+  copy:
+    src: /tmp/downloads/dgi_gsearch_extensions/target/gsearch_extensions-0.1.1-jar-with-dependencies.jar
+    dest: /var/lib/tomcat/webapps/fedoragsearch/WEB-INF/lib
+    remote_src: yes
+
+- name: Deploy basic solr config
+  become: true
+  become_user: tomcat
+  shell: |
+     cp -v /tmp/downloads/basic-solr-config/conf/*  {{ fedora_home }}/solr/collection1/conf
+     cp -Rv /tmp/downloads/basic-solr-config/islandora_transforms /var/lib/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex
+
 - name: Restart tomcat
   service:
     name: "tomcat"
     state: "restarted"
 
-- name: Wait for tomcat to restart    
+- name: Wait for tomcat to restart
   wait_for:
     port: 8080
     delay: 10
 
 - name: Run gsearch updateindex from FoxmlFiles
   uri:
-    url: "http://localhost:8080/fedoragsearch/rest?operation=updateIndex&action=fromFoxmlFiles&value=" 
+    url: "http://localhost:8080/fedoragsearch/rest?operation=updateIndex&action=fromFoxmlFiles&value="
     method: "GET"
     status_code: 200
 
