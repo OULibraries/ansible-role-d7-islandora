@@ -10,6 +10,8 @@
     dest: "/usr/share/tomcat/webapps/fedora/WEB-INF/lib/fcrepo-drupalauthfilter-3.8.1.jar"
     owner: "tomcat"
     group: "tomcat"
+    remote_src: true
+    follow: yes
 
 - name: Let Fedora know aobut the Islandora Drupal Filter
   copy:
@@ -17,6 +19,7 @@
     dest: "{{fedora_home}}/server/config/jaas.conf"
     owner: "tomcat"
     group: "tomcat"
+    follow: yes
 
 - name: Configure the Islandora Drupal Filter
   template:
