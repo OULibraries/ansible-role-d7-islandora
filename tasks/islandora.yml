@@ -47,6 +47,29 @@
     timeout: 90
     echo: yes
 
+- name: Ensure /opt/oulib/island/etc exists
+  file:
+    path: /opt/oulib/island/etc
+    state: directory
+    mode: 0655
+    owner: root
+    group: wheel
+    recurse: yes
+  tags:
+    - assets
+
+- name: Copy the Islandora Drush makefile
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/oulib/island/etc/repo.make"
+    mode: 0655
+    owner: root
+    group: wheel
+  with_items:
+    - repo.make
+  tags:
+    - assets
+
 - name: Proxy djatoka from tomcat and rewrite rft_id because djatoka is terrible
   blockinfile:
     dest: "/srv/{{ islandora_site }}/etc/srv_{{ islandora_site }}.conf"
@@ -78,7 +101,7 @@
 
 - name: Run  drush make file
   shell: >
-    /opt/d7/bin/d7_make.sh /srv/{{ islandora_site }}  {{ islandora_makefile }}
+    /opt/d7/bin/d7_make.sh /srv/{{ islandora_site }} /opt/oulib/island/etc/repo.make
   ignore_errors: yes
 
 - name: Ensure /opt/oulib/island/bin exists
