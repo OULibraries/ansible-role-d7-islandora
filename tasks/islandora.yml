@@ -104,7 +104,7 @@
 
 - name: Run  drush make file
   shell: >
-    /opt/d7/bin/d7_make.sh /srv/{{ islandora_site }} /opt/oulib/island/etc/repo.make
+    /opt/d7/bin/d7_make.sh /srv/{{ islandora_site }} file:///opt/oulib/island/etc/repo.make
   ignore_errors: yes
 
 - name: Ensure /opt/oulib/island/bin exists
