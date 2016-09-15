@@ -175,15 +175,3 @@
   wait_for:
     port: 8080
     delay: 10
-
-- name: Run gsearch updateindex from FoxmlFiles
-  uri:
-    url: "http://localhost:8080/fedoragsearch/rest?operation=updateIndex&action=fromFoxmlFiles&value="
-    method: "GET"
-    status_code: 200
-
-- name: Reload Solr core
-  uri:
-    url: "http://localhost:8080/solr/admin/cores?wt=json&action=RELOAD&core=collection1"
-    method: "GET"
-    status_code: 200
