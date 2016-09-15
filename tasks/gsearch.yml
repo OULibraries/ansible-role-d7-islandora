@@ -5,7 +5,7 @@
     timeout: 90
     dest: "/tmp/downloads/fedoragsearch-2.7.zip"
 
-- name: UnArchive GSearch
+- name: Unzip GSearch
   unarchive:
     src: /tmp/downloads/fedoragsearch-2.7.zip
     dest: /tmp/downloads
@@ -40,7 +40,7 @@
     owner: tomcat
     group: tomcat
 
-# Ansible copy doesn't support recusive copy of directories
+# Ansible copy doesn't support recusive copy of directories yet
 - name: Copy solr example files to the new directory
   become: yes
   become_user: tomcat
@@ -66,7 +66,7 @@
         </attribute>
       </user>
 
-- name: Restart tomcat to deploy GSearch and Solr wars
+- name: Restart Tomcat to deploy GSearch and Solr wars
   service:
     name: "tomcat"
     state: "restarted"
@@ -134,7 +134,7 @@
     # making changes to these files. Probably we should just fork the
     # upstream code in the near future.
 
-- name: Adjust path to Tomcat in solr transforms
+- name: Configure location of Tomcat in Solr transforms
   shell: |
     cd /tmp/downloads/basic-solr-config/islandora_transforms
     sed -i 's#/usr/local/fedora/tomcat#/var/lib/tomcat#g' ./*xslt
@@ -144,14 +144,14 @@
     dest: /tmp/downloads/dgi_gsearch_extensions
     repo: https://github.com/discoverygarden/dgi_gsearch_extensions.git
 
-- name: Get Discovery Garden gsearch extensions
+- name: Build Discovery Garden gsearch extensions
   shell: |
     cd /tmp/downloads/dgi_gsearch_extensions
     /opt/apache/maven/bin/mvn -q package
   args:
     creates: /tmp/downloads/dgi_gsearch_extensions/target/gsearch_extensions-0.1.1-jar-with-dependencies.jar
 
-- name: Deploy dgi_gsearch_extensions
+- name: Deploy Discovery Garden gsearch extensions
   become: true
   become_user: tomcat
   copy:
@@ -159,19 +159,14 @@
     dest: /var/lib/tomcat/webapps/fedoragsearch/WEB-INF/lib
     remote_src: yes
 
-- name: Deploy basic solr config
+- name: Deploy basic Solr config
   become: true
   become_user: tomcat
   shell: |
      cp -v /tmp/downloads/basic-solr-config/conf/*  {{ fedora_home }}/solr/collection1/conf
      cp -Rv /tmp/downloads/basic-solr-config/islandora_transforms /var/lib/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex
 
-- name: Restart tomcat
+- name: Restart Tomcat
   service:
     name: "tomcat"
     state: "restarted"
-
-- name: Wait for tomcat to restart
-  wait_for:
-    port: 8080
-    delay: 10
