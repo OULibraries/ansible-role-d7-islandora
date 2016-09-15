@@ -2,6 +2,10 @@
 - include: yum.yml
   sudo: yes
 
+- include: java-tools.yml
+  sudo: yes
+  tags:
+    - java-tools
 
 - include: gsearch.yml
   sudo: yes
