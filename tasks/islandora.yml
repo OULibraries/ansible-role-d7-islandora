@@ -126,9 +126,10 @@
     owner: root
     group: wheel
   with_items:
-    - repo.enable.sh
+    - repo_enable.php
   tags:
     - assets
 
 - name: Run repo.enable.sh
-  command: /opt/oulib/island/bin/repo.enable.sh
+  command: >
+    /opt/php/bin/drush -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_enable.php
