@@ -132,4 +132,4 @@
 
 - name: Run repo.enable.sh
   command: >
-    /opt/php/bin/drush -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_enable.php
+    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_enable.php
