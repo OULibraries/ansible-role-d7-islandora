@@ -1,15 +1,30 @@
 <?php
+# SETTINGS
+$repo_theme="oulib_repository";
 
-$anonymous_role = user_role_load_by_name('anonymous user');
-$authenticated_role = user_role_load_by_name('authenticated user');
+#####
 
-module_enable( array('jquery_update', 'bootstrap', 'oulib_repository') );
-variable_set('theme_default','oulib_repository');
+# Install the OU Repository theme
+module_enable( array('jquery_update'));
+theme_enable( array('bootstrap', $repo_theme));
+variable_set('theme_default', $repo_theme);
+drupal_flush_all_caches();
+
+# Install the Islandora Essential Modules
 module_enable( array('islandora', 'islandora_basic_collection', 'php_lib') );
+drupal_flush_all_caches();
 
-# Solr, forms, and metadata
+
+
+# Enable Islandora search, forms, and metadata modules
 module_enable( array('objective_forms','xml_forms','xml_form_builder','xml_schema_api','xml_form_elements','xml_form_api','islandora_marcxml'));
 module_enable( array('islandora_solr','islandora_solr_config'));
+drupal_flush_all_caches();
+
+
+# Get ready to apply some permissions 
+$anonymous_role = user_role_load_by_name('anonymous user');
+$authenticated_role = user_role_load_by_name('authenticated user');
 
 # Repository access control will happen in XACML, so we open things up in Drupal
 user_role_grant_permissions( $anonymous_role->rid, array('view fedora repository objects'));
@@ -21,6 +36,8 @@ user_role_grant_permissions( $authenticated_role->rid, array('search islandora s
 
 # Basic Image and Large Image
 module_enable( array('imagemagick','islandora_basic_image','islandora_large_image','islandora_openseadragon'));
+drupal_flush_all_caches();
+
 variable_set('image_toolkit', 'imagemagick');
 variable_set('imagemagick_convert', '/usr/bin/convert');
 variable_set('islandora_use_kakadu', TRUE);
@@ -29,6 +46,8 @@ variable_set('islandora_large_image_viewers', array('name' => array('none' => 'n
 
 # Books
 module_enable( array('islandora_paged_content', 'islandora_book', 'islandora_internet_archive_bookreader') );
+drupal_flush_all_caches();
+
 variable_set('islandora_book_page_viewers', array('name' => array('none' => 'none', 'islandora_openseadragon' => 'islandora_openseadragon'), 'default' => 'islandora_openseadragon'));
 variable_set('islandora_book_viewers', array('name' => array('none' => 'none', 'islandora_internet_archive_bookreader' => 'islandora_internet_archive_bookreader'), 'default' => 'islandora_internet_archive_bookreader'));
 variable_set('islandora_paged_content_djatoka_url', '/adore-djatoka');
@@ -37,6 +56,8 @@ variable_set('islandora_book_ingest_derivatives', array( 'pdf' => 'pdf', 'image'
 
 # URIs
 module_enable( array('pathauto', 'subpathauto', 'islandora_pathauto'));
+drupal_flush_all_caches();
+
 variable_set('islandora_pathauto_selected_cmodels', array( 0 => 'islandora:pageCModel', 1 => 'islandora:bookCModel',  2 => 'islandora:sp_large_image_cmodel') );
 variable_set('pathauto_islandora_islandora:bookCModel_pattern', '/uuid/[fedora:shortpid]');
 variable_set('pathauto_islandora_islandora:pageCModel_pattern', '/uuid/[fedora:shortpid]');
@@ -44,30 +65,8 @@ variable_set('pathauto_islandora_islandora:sp_large_image_cmodel_pattern', '/uui
 variable_set('subpathauto_depth', 4);
 
 
-# bootstrap themes and block enough to succesfully build and submit block
-# settings form 
-drupal_theme_initialize();
-global $theme_key;
-$theme  = drush_get_option('theme', $theme_key);
-module_load_include('inc', 'block', 'block.admin');
-$blocks = _block_rehash($theme);
-
-# Enable Solr Search block 
-$form_state['values']['blocks']['islandora_solr_simple']= array(
-  'region' => 'sidebar_first',
-  'theme'  => $theme,
-  'weight' => 0,
-);
-# Disable default search block 
-$form_state['values']['blocks']['search_form'] = array(
-  'region' => BLOCK_REGION_NONE,
-	'theme'  => $theme,
-	'weight' => 0,
-);
-# Apply new settings 
-drupal_form_submit('block_admin_display_form', $form_state, $blocks, $theme);
-
-# Configure simple title-only result display with human-readable label 
+# Configure simple title-only Solr search result display with
+#  human-readable labels
 $data = array(
   'solr_field' => 'dc.title',
   'field_type' => 'result_fields',
@@ -76,4 +75,34 @@ $data = array(
 );
 db_merge('islandora_solr_fields')
 ->key(array('solr_field'=>'dc.title'))
-->fields($data)->execute();;
+->fields($data)->execute();
+
+# Limit field display to just the ones we've configured
+variable_set('islandora_solr_limit_result_fields', 1);
+
+# bootstrap themes and block enough to succesfully build and submit block
+# settings form.
+drupal_theme_initialize();
+$my_theme = variable_get("theme_default", $repo_theme);
+module_load_include('inc', 'block', 'block.admin');
+$blocks = _block_rehash($my_theme);
+
+# Enable Solr Search block
+$form_state['values']['blocks']['islandora_solr_simple'] =
+    array(
+	  'region' => 'sidebar_first',
+	  'theme'  => $my_theme,
+	  'weight' => 0,
+	  );
+
+# Disable default search block
+$form_state['values']['blocks']['search_form'] =
+    array(
+	  'region' => BLOCK_REGION_NONE,
+	  'theme'  => $my_theme,
+	  'weight' => 0,
+	  );
+
+# Apply new settings
+drupal_form_submit('block_admin_display_form', $form_state, $blocks, $my_theme);
+drupal_flush_all_caches();
