@@ -23,6 +23,7 @@
 - name: Install Apache Project java tools
   unarchive:
     remote_src: yes
+    copy: no
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
   with_items:
@@ -55,5 +56,3 @@
     state: present
     dest: /etc/profile.d/java-tools.sh
     line: "export PATH=/opt/apache/ant/bin:/opt/apache/maven/bin:$PATH"
-
-
