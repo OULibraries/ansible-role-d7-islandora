@@ -5,17 +5,19 @@
     timeout: 90
     dest: "/tmp/downloads/fedoragsearch-2.7.zip"
 
-- name: UnArchive GSearch
+- name: Unzip GSearch
   unarchive:
     src: /tmp/downloads/fedoragsearch-2.7.zip
     dest: /tmp/downloads
     remote_src: yes
+    copy: no
 
 - name: Copy GSearch to Tomcat Webapps Directory
   copy:
     src: "/tmp/downloads/fedoragsearch-2.7/fedoragsearch.war"
     dest: "/usr/share/tomcat/webapps/fedoragsearch.war"
     remote_src: true
+    follow: yes
 
 - name: Download Solr from Apache.org
   get_url:
@@ -28,8 +30,9 @@
     src: /tmp/downloads/solr-4.2.0.tgz
     dest: /tmp/downloads
     remote_src: yes
+    copy: no
 
-- name: Create new directory for fedora
+- name: Create new directory for Fedora Solr
   file:
     path: "{{ fedora_home }}/solr"
     state: directory
@@ -37,7 +40,7 @@
     owner: tomcat
     group: tomcat
 
-# Ansible copy doesn't support recusive copy of directories
+# Ansible copy doesn't support recusive copy of directories yet
 - name: Copy solr example files to the new directory
   become: yes
   become_user: tomcat
@@ -49,19 +52,21 @@
     src: /tmp/downloads/solr-4.2.0/dist/solr-4.2.0.war
     dest: /usr/share/tomcat/webapps/solr.war
     remote_src: true
+    follow: yes
 
 - name: Insert "fgsAdmin" user in fedora-users.xml
   blockinfile:
     marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
     dest: /usr/local/fedora/server/config/fedora-users.xml
+    insertbefore: </users>
     block: |
-      <user name="fgsAdmin" password="fgsAdmin">
+      <user name="fgsAdmin" password="{{ gsearch_pass }}">
         <attribute name="fedoraRole">
           <value>administrator</value>
         </attribute>
       </user>
 
-- name: Restart tomcat to deploy GSearch and Solr wars
+- name: Restart Tomcat to deploy GSearch and Solr wars
   service:
     name: "tomcat"
     state: "restarted"
@@ -71,6 +76,7 @@
     src: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties
     dest: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic-for-islandora.properties.bak
     remote_src: true
+    follow: yes
 
 - name: Configure fgsconfig-basic-for-islandora.properties
   template:
@@ -83,6 +89,8 @@
   copy:
     src: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
     dest: /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml.bak
+    remote_src: true
+    follow: yes
 
 - name: Configure fgsconfig-basic.xml
   replace:
@@ -92,55 +100,21 @@
     replace: >
       \1fgsconfig-basic-for-islandora.properties\2
 
-- name: Download Ant
-  tags: ant
-  get_url:
-    url: http://mirror.ox.ac.uk/sites/rsync.apache.org/ant/binaries/apache-ant-1.9.7-bin.tar.gz
-    dest: /tmp/downloads/apache-ant-1.9.7-bin.tar.gz
-    owner: root
-    group: root
-    mode: 0644
-
-- name: Install Ant installation directory
-  tags: ant
-  file:
-    path: /opt/apache/
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-
-- name: Install Ant
-  tags: ant
-  unarchive:
-    remote_src: yes
-    src: /tmp/downloads/apache-ant-1.9.7-bin.tar.gz
-    dest: /opt/apache
-
-# - name: Install maven
-#   tags: ant
-#   unarchive:
-#     src: http://apache.mesi.com.ar/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
-#     dest: /opt/apache
-    
-- name: Build link to /usr/bin/ant
-  tags: ant
-  file:
-    state: link
-    force: true
-    src: /opt/apache/apache-ant-1.9.7/bin/ant
-    dest: /usr/bin/ant
-
 - name: Build fgsconfig
+  become: yes
+  become_user: tomcat
   command: >
-    ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
+    /opt/apache/ant/bin/ant -f /usr/share/tomcat/webapps/fedoragsearch/FgsConfig/fgsconfig-basic.xml
 
 - name: Copy ANT generated schema to schema.xml
+  become: yes
+  become_user: tomcat
   copy:
     src: /usr/share/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/conf/schema-4.2.0-for-fgs-2.7.xml
     dest: "{{ fedora_home }}/solr/collection1/conf/schema.xml"
     remote_src: true
     backup: yes
+    follow: yes
 
 - name: Add the Solr context file
   template:
@@ -149,7 +123,50 @@
     owner: "tomcat"
     group: "tomcat"
 
-- name: Restart tomcat
+- name: Get Discovery Garden basic Solr config
+  git:
+    dest: /tmp/downloads/basic-solr-config
+    repo: https://github.com/discoverygarden/basic-solr-config.git
+    version: 4.x
+    recursive: yes
+    force: yes
+    # We have to force this to make it idempotent because we'll be
+    # making changes to these files. Probably we should just fork the
+    # upstream code in the near future.
+
+- name: Configure location of Tomcat in Solr transforms
+  shell: |
+    cd /tmp/downloads/basic-solr-config/islandora_transforms
+    sed -i 's#/usr/local/fedora/tomcat#/var/lib/tomcat#g' ./*xslt
+
+- name: Get Discovery Garden gsearch extensions
+  git:
+    dest: /tmp/downloads/dgi_gsearch_extensions
+    repo: https://github.com/discoverygarden/dgi_gsearch_extensions.git
+
+- name: Build Discovery Garden gsearch extensions
+  shell: |
+    cd /tmp/downloads/dgi_gsearch_extensions
+    /opt/apache/maven/bin/mvn -q package
+  args:
+    creates: /tmp/downloads/dgi_gsearch_extensions/target/gsearch_extensions-0.1.1-jar-with-dependencies.jar
+
+- name: Deploy Discovery Garden gsearch extensions
+  become: true
+  become_user: tomcat
+  copy:
+    src: /tmp/downloads/dgi_gsearch_extensions/target/gsearch_extensions-0.1.1-jar-with-dependencies.jar
+    dest: /var/lib/tomcat/webapps/fedoragsearch/WEB-INF/lib
+    remote_src: yes
+
+- name: Deploy basic Solr config
+  become: true
+  become_user: tomcat
+  shell: |
+     cp -v /tmp/downloads/basic-solr-config/conf/*  {{ fedora_home }}/solr/collection1/conf
+     cp -Rv /tmp/downloads/basic-solr-config/islandora_transforms /var/lib/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex
+
+- name: Restart Tomcat
   service:
     name: "tomcat"
     state: "restarted"

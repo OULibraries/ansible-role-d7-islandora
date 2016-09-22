@@ -109,6 +109,7 @@ projects[islandora_internet_archive_bookreader_custom][download][url] = "https:/
 projects[islandora_embed][type] = "module"
 projects[islandora_embed][download][type] = "git"
 projects[islandora_embed][download][url] = "https://github.com/OULibraries/islandora_embed.git"
+projects[islandora_embed][download][tag] = "7.x-1.4-oulib"
 
 ; Libraries
 libraries[tuque][type] = "library"
