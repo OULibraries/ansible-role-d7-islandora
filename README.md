@@ -21,6 +21,7 @@ islandora_db_user: root
 islandora_db_pass: root        
 
 islandora_site: "repository"   # Islandora Drupal Site name
+islandora_db: "drupal_{{islandora_site}}_{{environment_name}}" 
 ```
 
 Dependencies
