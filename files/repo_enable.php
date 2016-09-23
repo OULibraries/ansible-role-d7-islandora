@@ -106,3 +106,9 @@ $form_state['values']['blocks']['search_form'] =
 # Apply new settings
 drupal_form_submit('block_admin_display_form', $form_state, $blocks, $my_theme);
 drupal_flush_all_caches();
+
+# Islandora oEmbed Service:
+module_enable( array('ctools', 'link', 'themekey'));
+module_enable( array('oembed', 'oembed_provider', 'oembed_field'));
+module_enable( array('islandora_embed', 'ou_bagit_importer', 'islandora_internet_archive_bookreader_custom'));
+theme_enable( array('entity_iframe_theme', 'islandora_embed_theme'));
