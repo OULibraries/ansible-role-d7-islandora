@@ -27,8 +27,21 @@
     force: true
     src: /opt/adore/adore-djatoka-1.1
     dest: /opt/adore/djatoka
+ 
+- name: Configure Kakadu system libraries
+  lineinfile:
+    dest: /etc/ld.so.conf.d/kdu_libs.conf
+    insertafter: EOF
+    create: yes
+    line: /opt/adore/djatoka/lib/Linux-x86-64
 
-- name: Copy Djatoka war to tomcat/webapps
+- name: Symlink kdu_compress command
+  file:
+    src: /opt/adore/djatoka/bin/Linux-x86-64/kdu_compress
+    dest: /usr/local/bin/kdu_compress
+    state: link
+
+- name: Copy Djatoka war to $CATALINA_HOME/webapps
   copy:
     src: "/opt/adore/djatoka/dist/adore-djatoka.war"
     dest: "/usr/share/tomcat/webapps/adore-djatoka.war"
@@ -59,18 +72,12 @@
     group: tomcat
     follow: yes
 
-- name: Configure Kakadu libraries
-  lineinfile:
-    dest: /etc/ld.so.conf.d/kdu_libs.conf
-    insertafter: EOF
-    create: yes
-    line: /opt/adore/djatoka/lib/Linux-x86-64
+- name: Restart Tomcat one final time
+  service:
+    name: "tomcat"
+    state: "restarted"
+    
 
-- name: Symlink kdu_compress command
-  file:
-    src: /opt/adore/djatoka/bin/Linux-x86-64/kdu_compress
-    dest: /usr/local/bin/kdu_compress
-    state: link
 
 # - name: Accommodating viewing restrictions for djatoka
 #   template:
