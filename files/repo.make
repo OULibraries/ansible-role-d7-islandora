@@ -27,9 +27,9 @@ projects[oulib_repo][type] = "theme"
 projects[oulib_repo][download][type] = "git"
 projects[oulib_repo][download][url] = "https://github.com/OULibraries/oulib_repo.git"
 
-projects[oulib_repositorytheme][type] = "theme"
-projects[oulib_repositorytheme][download][type] = "git"
-projects[oulib_repositorytheme][download][url] = "https://github.com/OULibraries/oulib_repositorytheme.git"
+projects[oulib_repository][type] = "theme"
+projects[oulib_repository][download][type] = "git"
+projects[oulib_repository][download][url] = "https://github.com/OULibraries/oulib_repositorytheme.git"
 
 projects[islandora_embed_theme][type] = "theme"
 projects[islandora_embed_theme][download][type] = "git"
