@@ -83,7 +83,7 @@
       RewriteRule ^/adore-djatoka/resolver.*$ /adore-djatoka/resolver?%1rft_id=http://localhost%2 [L,PT]
       ProxyPass /adore-djatoka http://localhost:8080/adore-djatoka
       ProxyPassReverse /adore-djatoka http://localhost:8080/adore-djatoka
-
+      
 - name: loopback proxy from https to http because djatoka is terrible
   blockinfile:
     dest: "/etc/httpd/conf.d/apc.conf"
@@ -133,3 +133,24 @@
 - name: Run repo.enable.sh
   command: >
     /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_enable.php
+
+- name: Modify the script of oEmbed module
+  template:
+    src: "oembedcore.module.j2"
+    dest: "/srv/{{islandora_site}}/drupal/sites/all/modules/oembed/oembedcore.module"
+    owner: "apache"
+    group: "apache"
+
+- name: Modify the script of subpathauto module
+  template:
+    src: "subpathauto.module.j2"
+    dest: "/srv/{{islandora_site}}/drupal/sites/all/modules/subpathauto/subpathauto.module"
+    owner: "apache"
+    group: "apache"
+
+- name: Modify the djatoka url of Islandora bookreader module
+  template:
+    src: "theme.inc.j2"
+    dest: "/srv/{{islandora_site}}/drupal/sites/all/modules/islandora_internet_archive_bookreader/theme/theme.inc"
+    owner: "apache"
+    group: "apache"
