@@ -1,2 +1,11 @@
 ---
 # defaults file for OULibraries.d7-islandora
+
+gsearch_pass: "fgsAdmin" # default password for gsearch admin
+
+islandora_db_host: "localhost" # DBMS for Islandora Drupal
+islandora_db_pass: "root"   # User account for Islandora Drupal db
+islandora_db_user: "root"   # Password for Islandor Drupal db
+
+islandora_site: "repository"   # Islandora Drupal Site name
+
