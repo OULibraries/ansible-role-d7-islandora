@@ -22,7 +22,7 @@
 
            postgresql users can set: jdbcDriverClass="org.postgresql.Driver" jdbcURLProtocol="jdbc:postgresql"
       -->
-    <connection server="{{ islandora_db_host }}" port="3306" dbname="{{islandora_db}}" user="{{islandora_db_user}}" password="{{islandora_db_pass}}">
+    <connection server="{{ islandora_db_host }}" port="{{ islandora_db_port }}" dbname="{{islandora_db}}" user="{{islandora_db_user}}" password="{{islandora_db_pass}}">
     <sql>
         <!--Different sql statement for each connection.  This is for drupal 
             multisites that are setup using one database with table prefixes.
