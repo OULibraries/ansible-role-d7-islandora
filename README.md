@@ -11,15 +11,8 @@ Requires (and installs) pexpect on target host
 Role Variables
 --------------
 
-```yaml
-gsearch_pass: "fgsAdmin" # default password for gsearch admin
+See the `defaults/main.yml` for this roles important variables. 
 
-islandora_db_host: "localhost" # DBMS for Islandora Drupal
-islandora_db_pass: "root"   # User account for Islandora Drupal db
-islandora_db_user: "root"   # Password for Islandor Drupal db
-
-islandora_site: "repository"   # Islandora Drupal Site name
-```
 
 Dependencies
 ------------

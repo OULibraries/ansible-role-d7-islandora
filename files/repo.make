@@ -23,6 +23,10 @@ projects[subpathauto][version] = "1.3"
 projects[bootstrap][version] = "3.6"
 projects[entity_iframe_theme][version] = "1.0"
 
+projects[oulib_repo][type] = "theme"
+projects[oulib_repo][download][type] = "git"
+projects[oulib_repo][download][url] = "https://github.com/OULibraries/oulib_repo.git"
+
 projects[oulib_repositorytheme][type] = "theme"
 projects[oulib_repositorytheme][download][type] = "git"
 projects[oulib_repositorytheme][download][url] = "https://github.com/OULibraries/oulib_repositorytheme.git"

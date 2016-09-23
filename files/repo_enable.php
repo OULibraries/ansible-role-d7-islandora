@@ -1,6 +1,6 @@
 <?php
 # SETTINGS
-$repo_theme="oulib_repository";
+$repo_theme="oulib_repositorytheme";
 
 #####
 

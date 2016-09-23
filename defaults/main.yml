@@ -3,9 +3,11 @@
 
 gsearch_pass: "fgsAdmin" # default password for gsearch admin
 
-islandora_db_host: "localhost" # DBMS for Islandora Drupal
-islandora_db_pass: "root"   # User account for Islandora Drupal db
-islandora_db_user: "root"   # Password for Islandor Drupal db
+# DBMS Settings for Islandora Drupal
+islandora_db_host: "{{ mariadb_host }}"       
+islandora_db_port: "{{ mariadb_port }}"        
+islandora_db_user: root        
+islandora_db_pass: root        
 
 islandora_site: "repository"   # Islandora Drupal Site name
-
+islandora_db: "drupal_{{islandora_site}}_{{environment_name}}" 
