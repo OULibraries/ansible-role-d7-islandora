@@ -46,8 +46,8 @@
       'Enter MYSQL host port:': ''  # take default  setting
       'Enter MYSQL user:': ''   # take default  setting
       'Enter MYSQL password:': '{{ islandora_db_pass }}'
-    creates: /srv/repository
-    timeout: 90
+    creates: /srv/{{ islandora_site }}/default/settings.php
+    timeout: 180
     echo: yes
 
 - name: Ensure /opt/oulib/island/etc exists
