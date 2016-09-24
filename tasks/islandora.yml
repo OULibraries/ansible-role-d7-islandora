@@ -47,7 +47,7 @@
       'Enter MYSQL user:': ''   # take default  setting
       'Enter MYSQL password:': '{{ islandora_db_pass }}'
     creates: /srv/{{ islandora_site }}/default/settings.php
-    timeout: 180
+    timeout: 900
     echo: yes
 
 - name: Ensure /opt/oulib/island/etc exists
