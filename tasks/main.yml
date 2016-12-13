@@ -1,0 +1,23 @@
+---
+- include: yum.yml
+  sudo: yes
+
+- include: java-tools.yml
+  sudo: yes
+  tags:
+    - java-tools
+
+- include: gsearch.yml
+  sudo: yes
+  tags:
+    - gsearch
+
+- include: djatoka.yml
+  sudo: yes
+  tags:
+    - djatoka
+
+- include: islandora.yml
+  sudo: yes
+  tags: 
+    - isla

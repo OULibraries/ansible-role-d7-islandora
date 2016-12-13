@@ -1,0 +1,166 @@
+---
+- name: Get the Islandora Drupal Filter
+  get_url:
+    url: "https://github.com/Islandora/islandora_drupal_filter/releases/download/v7.1.3/fcrepo-drupalauthfilter-3.8.1.jar"
+    dest: "/tmp/downloads/fcrepo-drupalauthfilter-3.8.1.jar"
+
+- name: Install the Islandora Drupal Filter
+  copy:
+    src: "/tmp/downloads/fcrepo-drupalauthfilter-3.8.1.jar"
+    dest: "/usr/share/tomcat/webapps/fedora/WEB-INF/lib/fcrepo-drupalauthfilter-3.8.1.jar"
+    owner: "tomcat"
+    group: "tomcat"
+    remote_src: true
+    follow: yes
+
+- name: Let Fedora know aobut the Islandora Drupal Filter
+  copy:
+    src: "jaas.conf"
+    dest: "{{fedora_home}}/server/config/jaas.conf"
+    owner: "tomcat"
+    group: "tomcat"
+    follow: yes
+
+- name: Configure the Islandora Drupal Filter
+  template:
+    src: "filter-drupal.xml.j2"
+    dest: "{{fedora_home}}/server/config/filter-drupal.xml"
+    owner: "tomcat"
+    group: "tomcat"
+
+- name: Restart tomcat
+  service:
+    name: "tomcat"
+    state: "restarted"
+
+- name: Install pexpect python module
+  command: >
+    pip install pexpect
+
+- name: Install the repository Drupal site
+  expect:
+    command: /opt/d7/bin/d7_init.sh /srv/{{ islandora_site }}
+    responses:
+      'Enter host suffix:': ''   # take default  setting
+      'Enter MYSQL host name:': ''  # take default  setting
+      'Enter MYSQL host port:': ''  # take default  setting
+      'Enter MYSQL user:': ''   # take default  setting
+      'Enter MYSQL password:': '{{ islandora_db_pass }}'
+    creates: /srv/{{ islandora_site }}/default/settings.php
+    timeout: 900
+    echo: yes
+
+- name: Ensure /opt/oulib/island/etc exists
+  file:
+    path: /opt/oulib/island/etc
+    state: directory
+    mode: 0655
+    owner: root
+    group: wheel
+    recurse: yes
+  tags:
+    - assets
+
+- name: Copy the Islandora Drush makefile
+  copy:
+    src: "{{ item }}"
+    dest: "/opt/oulib/island/etc/repo.make"
+    mode: 0655
+    owner: root
+    group: wheel
+  with_items:
+    - repo.make
+  tags:
+    - assets
+
+- name: Proxy djatoka from tomcat and rewrite rft_id because djatoka is terrible
+  blockinfile:
+    dest: "/srv/{{ islandora_site }}/etc/srv_{{ islandora_site }}.conf"
+    insertbefore: "</VirtualHost>"
+    block: |
+      RewriteEngine on
+      RewriteCond %{QUERY_STRING} ^(.*)rft_id=https%3A%2F%2F{{ islandora_site }}.{{ httpd_dn_suffix }}(.*)$
+      RewriteRule ^/adore-djatoka/resolver.*$ /adore-djatoka/resolver?%1rft_id=http://localhost%2 [L,PT]
+      ProxyPass /adore-djatoka http://localhost:8080/adore-djatoka
+      ProxyPassReverse /adore-djatoka http://localhost:8080/adore-djatoka
+      
+- name: loopback proxy from https to http because djatoka is terrible
+  blockinfile:
+    dest: "/etc/httpd/conf.d/apc.conf"
+    insertbefore: "</VirtualHost>"
+    block: |
+       SSLProxyEngine on
+       SSLProxyCheckPeerCN Off
+       SSLProxyCheckPeerName Off
+       ProxyPass /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
+       ProxyPassReverse /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
+       ProxyPass /uuid https://{{ islandora_site}}.{{ httpd_dn_suffix }}/uuid
+       ProxyPassReverse /uuid https://{{ islandora_site}}.{{ httpd_dn_suffix }}/uuid
+
+- name: Restart apache
+  service:
+    name: "httpd"
+    state: "restarted"
+
+- name: Run  drush make file
+  shell: >
+    /opt/d7/bin/d7_make.sh /srv/{{ islandora_site }} file:///opt/oulib/island/etc/repo.make
+  ignore_errors: yes
+
+- name: Ensure /opt/oulib/island/bin exists
+  file:
+    path: /opt/oulib/island/bin
+    state: directory
+    mode: 0655
+    owner: root
+    group: wheel
+    recurse: yes
+  tags:
+    - assets
+
+- name: Copy scripts to /opt/oulib/island/bin
+  copy:
+    src: "{{ item }}"
+    dest: /opt/oulib/island/bin/
+    mode: 0754
+    owner: root
+    group: wheel
+  with_items:
+    - repo_enable.php
+  tags:
+    - assets
+
+- name: Copy templated script to /opt/oulib/island/bin
+  template:
+    src: repo_cache_validate.sh.j2
+    dest: /opt/oulib/island/bin/repo_cache_validate.sh
+    mode: 0754
+    owner: root
+    group: wheel
+  tags:
+    - assets
+
+- name: Run repo.enable.sh
+  command: >
+    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_enable.php
+
+- name: Modify the script of oEmbed module
+  template:
+    src: "oembedcore.module.j2"
+    dest: "/srv/{{islandora_site}}/drupal/sites/all/modules/oembed/oembedcore.module"
+    owner: "apache"
+    group: "apache"
+
+- name: Modify the script of subpathauto module
+  template:
+    src: "subpathauto.module.j2"
+    dest: "/srv/{{islandora_site}}/drupal/sites/all/modules/subpathauto/subpathauto.module"
+    owner: "apache"
+    group: "apache"
+
+- name: Modify the djatoka url of Islandora bookreader module
+  template:
+    src: "theme.inc.j2"
+    dest: "/srv/{{islandora_site}}/drupal/sites/all/modules/islandora_internet_archive_bookreader/theme/theme.inc"
+    owner: "apache"
+    group: "apache"
