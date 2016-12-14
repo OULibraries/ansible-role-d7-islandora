@@ -1,0 +1,57 @@
+---
+- name: Create Apache Project installation directory
+  file:
+    path: /opt/apache/
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Download Apache Project java tools
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: 
+    - url: "http://mirror.ox.ac.uk/sites/rsync.apache.org/ant/binaries/apache-ant-1.9.7-bin.tar.gz"
+      dest: "/tmp/downloads/apache-ant-1.9.7-bin.tar.gz"
+    - url: "http://mirror.cc.columbia.edu/pub/software/apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz"
+      dest: "/tmp/downloads/apache-maven-3.3.9-bin.tar.gz"
+
+- name: Install Apache Project java tools
+  unarchive:
+    remote_src: yes
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - src: "/tmp/downloads/apache-ant-1.9.7-bin.tar.gz"
+      dest: /opt/apache
+    - src:  "/tmp/downloads/apache-maven-3.3.9-bin.tar.gz"
+      dest: /opt/apache
+
+- name: Build standard links for Apache Java tools
+  file:
+    state: link
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - src: /opt/apache/apache-ant-1.9.7
+      dest: /opt/apache/ant
+    - src: /opt/apache/apache-maven-3.3.9
+      dest: /opt/apache/maven
+
+- name: Ensure /etc/profile.d/java-tools.sh exists
+  file:
+    path: /etc/profile.d/java-tools.sh
+    state: touch
+    mode: 0644
+    owner: root
+    group: wheel
+
+- name: Add Java tools to path
+  lineinfile:
+    state: present
+    dest: /etc/profile.d/java-tools.sh
+    line: "export PATH=/opt/apache/ant/bin:/opt/apache/maven/bin:$PATH"
