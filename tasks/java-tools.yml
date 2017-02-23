@@ -15,7 +15,7 @@
     group: root
     mode: 0644
   with_items: 
-    - url: "http://mirror.ox.ac.uk/sites/rsync.apache.org/ant/binaries/apache-ant-1.9.7-bin.tar.gz"
+    - url: "https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.tar.gz"
       dest: "/tmp/downloads/apache-ant-1.9.7-bin.tar.gz"
     - url: "http://mirror.cc.columbia.edu/pub/software/apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz"
       dest: "/tmp/downloads/apache-maven-3.3.9-bin.tar.gz"
