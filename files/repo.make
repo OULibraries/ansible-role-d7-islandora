@@ -60,7 +60,7 @@ projects[objective_forms][type] = "module"
 projects[objective_forms][download][type] = "git"
 projects[objective_forms][download][url] = "https://github.com/Islandora/objective_forms.git"
 projects[objective_forms][download][tag] = "7.x-1.7"
-7.x-1.7
+
 projects[islandora_xml_forms][type] = "module"
 projects[islandora_xml_forms][download][type] = "git"
 projects[islandora_xml_forms][download][url] = "https://github.com/Islandora/islandora_xml_forms.git"
