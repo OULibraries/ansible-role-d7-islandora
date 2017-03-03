@@ -60,7 +60,7 @@ projects[objective_forms][type] = "module"
 projects[objective_forms][download][type] = "git"
 projects[objective_forms][download][url] = "https://github.com/Islandora/objective_forms.git"
 projects[objective_forms][download][tag] = "7.x-1.7"
-
+7.x-1.7
 projects[islandora_xml_forms][type] = "module"
 projects[islandora_xml_forms][download][type] = "git"
 projects[islandora_xml_forms][download][url] = "https://github.com/Islandora/islandora_xml_forms.git"
@@ -113,6 +113,11 @@ projects[islandora_internet_archive_bookreader_custom][download][url] = "https:/
 projects[islandora_embed][type] = "module"
 projects[islandora_embed][download][type] = "git"
 projects[islandora_embed][download][url] = "https://github.com/OULibraries/islandora_embed.git"
+
+projects[islandora_batch][type] = "module"
+projects[islandora_batch][download][type] = "git"
+projects[islandora_batch][download][url] = "https://github.com/Islandora/islandora_batch.git"
+projects[islandora_batch][download][tag] = "7.x-1.7"
 
 projects[ou-bagit-importer][type] = "module"
 projects[ou-bagit-importer][download][type] = "git"
