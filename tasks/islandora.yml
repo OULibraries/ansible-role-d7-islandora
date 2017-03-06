@@ -41,10 +41,13 @@
   expect:
     command: /opt/d7/bin/d7_init.sh /srv/{{ islandora_site }}
     responses:
-      'Enter host suffix:': ''   # take default  setting
-      'Enter MYSQL host name:': ''  # take default  setting
-      'Enter MYSQL host port:': ''  # take default  setting
-      'Enter MYSQL user:': ''   # take default  setting
+      'Enter host suffix:': ''   # take default
+      'Enter base URL without trailing slash: ': ''  # take default
+      'Enter cookie domain: ': ''  # take default
+      'Enter CAS server: ': ''  # take default
+      'Enter MYSQL host name:': ''  # take default
+      'Enter MYSQL host port:': ''  # take default
+      'Enter MYSQL user:': ''   # take default
       'Enter MYSQL password:': '{{ islandora_db_pass }}'
     creates: /srv/{{ islandora_site }}/default/settings.php
     timeout: 900
