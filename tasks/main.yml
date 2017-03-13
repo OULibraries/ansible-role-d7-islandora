@@ -1,23 +1,23 @@
 ---
 - include: yum.yml
-  sudo: yes
+  become: true
 
 - include: java-tools.yml
-  sudo: yes
+  become: true
   tags:
     - java-tools
 
 - include: gsearch.yml
-  sudo: yes
+  become: true
   tags:
     - gsearch
 
 - include: djatoka.yml
-  sudo: yes
+  become: true
   tags:
     - djatoka
 
 - include: islandora.yml
-  sudo: yes
+  become: true
   tags: 
     - isla
