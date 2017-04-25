@@ -143,6 +143,7 @@
   git:
     dest: /tmp/downloads/dgi_gsearch_extensions
     repo: https://github.com/discoverygarden/dgi_gsearch_extensions.git
+    version: v0.1.1
 
 - name: Build Discovery Garden gsearch extensions
   shell: |
