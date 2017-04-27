@@ -168,6 +168,11 @@
     owner: "apache"
     group: "apache"
 
+- name: Destroy config directory
+  file:
+    path: /srv/{{ islandora_site }}/default/files/config
+    state: absent
+
 - name: Fetch OULib repository config
   git:
     dest: /srv/{{ islandora_site }}/default/files/config
