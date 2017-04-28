@@ -167,3 +167,19 @@
     dest: "/srv/{{islandora_site}}/drupal/sites/all/modules/islandora_internet_archive_bookreader/theme/theme.inc"
     owner: "apache"
     group: "apache"
+
+- name: Destroy config directory
+  file:
+    path: /srv/{{ islandora_site }}/default/files/config
+    state: absent
+
+- name: Fetch OULib repository config
+  git:
+    dest: /srv/{{ islandora_site }}/default/files/config
+    repo: https://github.com/OULibraries/oulib_repo_config.git
+    recursive: yes
+    force: yes
+
+- name: Run config sync
+  command: >
+    /opt/php/bin/drush -r /srv/{{ islandora_site }}/drupal config-sync

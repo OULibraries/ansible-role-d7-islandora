@@ -18,6 +18,8 @@ projects[oembed][version] = "0.1-beta3"
 projects[token][version] = "1.6"
 projects[pathauto][version] = "1.3"
 projects[subpathauto][version] = "1.3"
+projects[configuration][version] = "2.0-alpha3"
+projects[xautoload][version] = "5.7"
 
 ; Themes
 projects[bootstrap][version] = "3.6"

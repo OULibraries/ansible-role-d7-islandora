@@ -112,3 +112,6 @@ module_enable( array('ctools', 'link', 'themekey'));
 module_enable( array('oembed', 'oembed_provider', 'oembed_field'));
 module_enable( array('islandora_embed', 'ou_bagit_importer', 'islandora_internet_archive_bookreader_custom'));
 theme_enable( array('entity_iframe_theme', 'islandora_embed_theme'));
+
+# Configuration management
+module_enable( array('configuration', 'xautoload'));
