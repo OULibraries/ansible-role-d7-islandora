@@ -64,15 +64,13 @@
   tags:
     - assets
 
-- name: Copy the Islandora Drush makefile
-  copy:
-    src: "{{ item }}"
+- name: Get the Islandora Drush makefile
+  get_url:
+    url: "https://raw.githubusercontent.com/OULibraries/d7-ops/master/make/repo.make"
     dest: "/opt/oulib/island/etc/repo.make"
-    mode: 0655
+    mode: 0644
     owner: root
     group: wheel
-  with_items:
-    - repo.make
   tags:
     - assets
 
