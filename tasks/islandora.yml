@@ -128,7 +128,8 @@
     group: wheel
   with_items:
     - repo_enable.php
-    - repo_add_blocks.php
+    - repo_add_logo_block.php
+    - repo_add_discover_block.php
   tags:
     - assets
 
@@ -188,9 +189,13 @@
   command: >
     /opt/php/bin/drush -r /srv/{{ islandora_site }}/drupal config-sync
 
-- name: run repo_add_blocks.php
+- name: run repo_add_logo_block.php
   command: >
-    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_add_blocks.php
+    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_add_logo_block.php
+
+- name: run repo_add_discover_block.php
+  command: >
+    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_add_discover_block.php
 
 - name: Collection exists?
   uri:
