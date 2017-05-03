@@ -135,11 +135,16 @@
 
 - name: Copy templated script to /opt/oulib/island/bin
   template:
-    src: repo_cache_validate.sh.j2
-    dest: /opt/oulib/island/bin/repo_cache_validate.sh
+    src: "{{ item.src }}"
+    dest: "/opt/oulib/island/bin/{{ item.dest }}"
     mode: 0754
     owner: root
     group: wheel
+  with_items:
+    - src: repo_cache_validate.sh.j2
+      dest: repo_cache_validate.sh
+    - src: create_collection.php.j2
+      dest: create_collection.php
   tags:
     - assets
 
@@ -183,3 +188,19 @@
 - name: Run config sync
   command: >
     /opt/php/bin/drush -r /srv/{{ islandora_site }}/drupal config-sync
+
+- name: Collection exists?
+  uri:
+    method: GET
+    url: >
+      https://{{ islandora_site}}.{{ httpd_dn_suffix }}//islandora/object/{{ islandora_collection.pid }}
+    validate_certs: no
+    follow_redirects: safe
+    return_content: yes
+    status_code: 200,404
+  register: islandora_collection_check
+
+- name: Conditionally run create_collection.php
+  command: >
+    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/create_collection.php
+  when: islandora_collection_check.status == 404
