@@ -130,6 +130,7 @@
     group: wheel
   with_items:
     - repo_enable.php
+    - repo_add_blocks.php
   tags:
     - assets
 
@@ -143,8 +144,8 @@
   with_items:
     - src: repo_cache_validate.sh.j2
       dest: repo_cache_validate.sh
-    - src: create_collection.php.j2
-      dest: create_collection.php
+    - src: repo_create_collection.php.j2
+      dest: repo_create_collection.php
   tags:
     - assets
 
@@ -189,6 +190,10 @@
   command: >
     /opt/php/bin/drush -r /srv/{{ islandora_site }}/drupal config-sync
 
+- name: run repo_add_blocks.php
+  command: >
+    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_add_blocks.php
+
 - name: Collection exists?
   uri:
     method: GET
@@ -200,7 +205,7 @@
     status_code: 200,404
   register: islandora_collection_check
 
-- name: Conditionally run create_collection.php
+- name: Conditionally run repo_create_collection.php
   command: >
-    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/create_collection.php
+    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_create_collection.php
   when: islandora_collection_check.status == 404
