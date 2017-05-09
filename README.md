@@ -31,7 +31,7 @@ TBD
 License
 -------
 
-TBD
+[MIT](https://github.com/OULibraries/ansible-role-d7-islandora/blob/master/LICENSE)
 
 Author Information
 ------------------
