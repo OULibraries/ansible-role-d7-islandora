@@ -100,6 +100,15 @@
     replace: >
       \1fgsconfig-basic-for-islandora.properties\2
 
+- name: Configure deployed gsearch to use the Fedora object store
+  replace:
+    dest: /usr/share/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/repository/FgsRepos/repository.properties
+    regexp: >
+      ^(fgsrepository.fedoraObjectDir   = )\/usr\/local\/fedora\/data\/objectStore$
+    replace: >
+      \1{{ fedora_fs_object_store }}
+    backup: yes
+
 - name: Build fgsconfig
   become: yes
   become_user: tomcat
