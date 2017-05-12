@@ -10,7 +10,6 @@
     src: /tmp/downloads/fedoragsearch-2.7.zip
     dest: /tmp/downloads
     remote_src: yes
-    copy: no
 
 - name: Copy GSearch to Tomcat Webapps Directory
   copy:
@@ -30,7 +29,6 @@
     src: /tmp/downloads/solr-4.2.0.tgz
     dest: /tmp/downloads
     remote_src: yes
-    copy: no
 
 - name: Create new directory for Fedora Solr
   file:
@@ -126,8 +124,8 @@
 - name: Get Discovery Garden basic Solr config
   git:
     dest: /tmp/downloads/basic-solr-config
-    repo: https://github.com/discoverygarden/basic-solr-config.git
-    version: 4.x
+    repo: https://github.com/OULibraries/basic-solr-config.git
+    version: 4.x-oulib
     recursive: yes
     force: yes
     # We have to force this to make it idempotent because we'll be
