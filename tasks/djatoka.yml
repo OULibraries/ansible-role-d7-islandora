@@ -19,7 +19,6 @@
     dest: "/opt/adore"
     creates: "/opt/adore/adore-djatoka-1.1/README.txt"
     remote_src: yes
-    copy: no
 
 - name: Add symlink at /opt/adore/djatoka
   file:
