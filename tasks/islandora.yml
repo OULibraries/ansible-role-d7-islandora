@@ -93,6 +93,7 @@
        SSLProxyEngine on
        SSLProxyCheckPeerCN Off
        SSLProxyCheckPeerName Off
+       SSLProxyCheckPeerExpire Off
        ProxyPass /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
        ProxyPassReverse /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
        ProxyPass /uuid https://{{ islandora_site}}.{{ httpd_dn_suffix }}/uuid
