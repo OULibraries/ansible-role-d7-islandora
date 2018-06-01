@@ -19,3 +19,4 @@ islandora_collection:
 
 # Path to fedora object store, used by gsearch
 fedora_fs_object_store: /usr/local/fedora/data/objectStore
+fedora_logpath: /usr/local/fedora/server/logs
