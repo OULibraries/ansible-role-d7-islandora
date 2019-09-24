@@ -121,9 +121,17 @@
     owner: "tomcat"
     group: "tomcat"
 
+- name: Make a home for Discovery Garden config files
+  file:
+    path: /opt/DGI/
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
 - name: Get Discovery Garden basic Solr config
   git:
-    dest: /tmp/downloads/basic-solr-config
+    dest: /opt/DGI/basic-solr-config
     repo: https://github.com/discoverygarden/basic-solr-config.git
     version: 4.x
     recursive: yes
@@ -134,7 +142,9 @@
 
 - name: Configure location of Tomcat in Solr transforms
   shell: |
-    cd /tmp/downloads/basic-solr-config/islandora_transforms
+    cd /opt/DGI/basic-solr-config
+    sed -i 's#/usr/local/fedora/tomcat#/var/lib/tomcat#g' ./*xslt
+    cd /opt/DGI/basic-solr-config/islandora_transforms
     sed -i 's#/usr/local/fedora/tomcat#/var/lib/tomcat#g' ./*xslt
 
 - name: Get Discovery Garden gsearch extensions
@@ -142,6 +152,7 @@
     dest: /tmp/downloads/dgi_gsearch_extensions
     repo: https://github.com/discoverygarden/dgi_gsearch_extensions.git
     version: v0.1.1
+    force: yes
 
 - name: Build Discovery Garden gsearch extensions
   shell: |
@@ -162,8 +173,9 @@
   become: true
   become_user: tomcat
   shell: |
-     cp -v /tmp/downloads/basic-solr-config/conf/*  {{ fedora_home }}/solr/collection1/conf
-     cp -Rv /tmp/downloads/basic-solr-config/islandora_transforms /var/lib/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex
+     cp -v /opt/DGI/basic-solr-config/foxmlToSolr.xslt  /var/lib/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex/foxmlToSolr.xslt
+     cp -v /opt/DGI/basic-solr-config/conf/*  {{ fedora_home }}/solr/collection1/conf
+     cp -Rv /opt/DGI/basic-solr-config/islandora_transforms /var/lib/tomcat/webapps/fedoragsearch/WEB-INF/classes/fgsconfigFinal/index/FgsIndex
 
 - name: Configure deployed gsearch to use the Fedora object store
   replace:
