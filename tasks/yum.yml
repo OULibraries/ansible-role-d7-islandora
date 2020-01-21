@@ -8,3 +8,4 @@
     - libxml2
     - poppler-utils
     - lame
+    - ghostscript
