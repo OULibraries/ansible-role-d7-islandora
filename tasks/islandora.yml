@@ -92,8 +92,13 @@
     insertbefore: "</VirtualHost>"
     block: |
        SSLProxyEngine on
-       SSLProxyCheckPeerCN Off
-       SSLProxyCheckPeerName Off
+       
+       # We're using a self-signed cert for a local-only connection.
+       SSLProxyVerify none
+       SSLProxyCheckPeerCN off
+       SSLProxyCheckPeerName off
+       SSLProxyCheckPeerExpire off
+      
        ProxyPass /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
        ProxyPassReverse /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
        ProxyPass /uuid https://{{ islandora_site}}.{{ httpd_dn_suffix }}/uuid
