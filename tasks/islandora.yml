@@ -33,25 +33,34 @@
     name: "tomcat"
     state: "restarted"
 
-- name: Install pexpect python module
-  command: >
-    pip install pexpect
+- name: Install expect
+  yum:
+    name: expect
+    state: present
 
 - name: Install the repository Drupal site
-  expect:
-    command: /opt/d7/bin/d7_init.sh /srv/{{ islandora_site }}
-    responses:
-      'Enter host suffix:': ''   # take default
-      'Enter base URL without trailing slash: ': ''  # take default
-      'Enter cookie domain: ': ''  # take default
-      'Enter CAS server: ': ''  # take default
-      'Enter MYSQL host name:': ''  # take default
-      'Enter MYSQL host port:': ''  # take default
-      'Enter MYSQL user:': ''   # take default
-      'Enter MYSQL password:': '{{ islandora_db_pass }}'
-    creates: /srv/{{ islandora_site }}/default/settings.php
-    timeout: 900
-    echo: yes
+  shell: |
+    set timeout 300
+    spawn  /opt/d7/bin/d7_init.sh /srv/{{ islandora_site }}
+
+    expect "Enter host suffix:"     { send "\n" }
+    expect "Enter base URL without trailing slash:" { send "\n" }
+    expect "Enter cookie domain:"   { send "\n" }
+    expect "Enter CAS server:"      { send "\n" }
+    expect "Enter MYSQL host name:" { send "\n" }
+    expect "Enter MYSQL host port:" { send "\n" }
+    expect "Enter MYSQL user:"      { send "\n" }
+    expect "Enter MYSQL password:"  { send "{{ islandora_db_pass }}\n" }
+    expect EOF { send_user $expect_out(buffer) }
+
+    catch wait result
+    # wait returns a tuple containing status info about spawn process
+    exit [lindex $result 3]
+
+  args:
+    executable: /usr/bin/expect
+    creates: "/srv/{{ islandora_site }}/default/settings.php"
+
 
 - name: Ensure /opt/oulib/island/etc exists
   file:
@@ -84,7 +93,7 @@
       RewriteRule ^/adore-djatoka/resolver.*$ /adore-djatoka/resolver?%1rft_id=http://localhost%2 [L,PT]
       ProxyPass /adore-djatoka http://localhost:8080/adore-djatoka
       ProxyPassReverse /adore-djatoka http://localhost:8080/adore-djatoka
-      
+
 - name: loopback proxy from https to http because djatoka is terrible
   blockinfile:
     dest: "/opt/rh/httpd24/root/etc/httpd/conf.d/cache-control.conf"
@@ -92,13 +101,13 @@
     insertbefore: "</VirtualHost>"
     block: |
        SSLProxyEngine on
-       
+
        # We're using a self-signed cert for a local-only connection.
        SSLProxyVerify none
        SSLProxyCheckPeerCN off
        SSLProxyCheckPeerName off
        SSLProxyCheckPeerExpire off
-      
+
        ProxyPass /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
        ProxyPassReverse /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
        ProxyPass /uuid https://{{ islandora_site}}.{{ httpd_dn_suffix }}/uuid
