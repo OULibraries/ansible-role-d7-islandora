@@ -33,25 +33,34 @@
     name: "tomcat"
     state: "restarted"
 
-- name: Install pexpect python module
-  command: >
-    pip install pexpect
+- name: Install expect
+  yum:
+    name: expect
+    state: present
 
 - name: Install the repository Drupal site
-  expect:
-    command: /opt/d7/bin/d7_init.sh /srv/{{ islandora_site }}
-    responses:
-      'Enter host suffix:': ''   # take default
-      'Enter base URL without trailing slash: ': ''  # take default
-      'Enter cookie domain: ': ''  # take default
-      'Enter CAS server: ': ''  # take default
-      'Enter MYSQL host name:': ''  # take default
-      'Enter MYSQL host port:': ''  # take default
-      'Enter MYSQL user:': ''   # take default
-      'Enter MYSQL password:': '{{ islandora_db_pass }}'
-    creates: /srv/{{ islandora_site }}/default/settings.php
-    timeout: 900
-    echo: yes
+  shell: |
+    set timeout 300
+    spawn  /opt/d7/bin/d7_init.sh /srv/{{ islandora_site }}
+
+    expect "Enter host suffix:"     { send "\n" }
+    expect "Enter base URL without trailing slash:" { send "\n" }
+    expect "Enter cookie domain:"   { send "\n" }
+    expect "Enter CAS server:"      { send "\n" }
+    expect "Enter MYSQL host name:" { send "\n" }
+    expect "Enter MYSQL host port:" { send "\n" }
+    expect "Enter MYSQL user:"      { send "\n" }
+    expect "Enter MYSQL password:"  { send "{{ islandora_db_pass }}\n" }
+    expect EOF { send_user $expect_out(buffer) }
+
+    catch wait result
+    # wait returns a tuple containing status info about spawn process
+    exit [lindex $result 3]
+
+  args:
+    executable: /usr/bin/expect
+    creates: "/srv/{{ islandora_site }}/default/settings.php"
+
 
 - name: Ensure /opt/oulib/island/etc exists
   file:
@@ -84,7 +93,7 @@
       RewriteRule ^/adore-djatoka/resolver.*$ /adore-djatoka/resolver?%1rft_id=http://localhost%2 [L,PT]
       ProxyPass /adore-djatoka http://localhost:8080/adore-djatoka
       ProxyPassReverse /adore-djatoka http://localhost:8080/adore-djatoka
-      
+
 - name: loopback proxy from https to http because djatoka is terrible
   blockinfile:
     dest: "/opt/rh/httpd24/root/etc/httpd/conf.d/cache-control.conf"
@@ -92,13 +101,13 @@
     insertbefore: "</VirtualHost>"
     block: |
        SSLProxyEngine on
-       
+
        # We're using a self-signed cert for a local-only connection.
        SSLProxyVerify none
        SSLProxyCheckPeerCN off
        SSLProxyCheckPeerName off
        SSLProxyCheckPeerExpire off
-      
+
        ProxyPass /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
        ProxyPassReverse /islandora/object https://{{ islandora_site}}.{{ httpd_dn_suffix }}/islandora/object
        ProxyPass /uuid https://{{ islandora_site}}.{{ httpd_dn_suffix }}/uuid
@@ -125,20 +134,6 @@
   tags:
     - assets
 
-- name: Copy scripts to /opt/oulib/island/bin
-  copy:
-    src: "{{ item }}"
-    dest: /opt/oulib/island/bin/
-    mode: 0754
-    owner: root
-    group: wheel
-  with_items:
-    - repo_enable.php
-    - repo_add_logo_block.php
-    - repo_add_discover_block.php
-  tags:
-    - assets
-
 - name: Copy templated script to /opt/oulib/island/bin
   template:
     src: "{{ item.src }}"
@@ -149,72 +144,5 @@
   with_items:
     - src: repo_cache_validate.sh.j2
       dest: repo_cache_validate.sh
-    - src: repo_create_collection.php.j2
-      dest: repo_create_collection.php
   tags:
     - assets
-
-- name: Run repo.enable.sh
-  command: >
-    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_enable.php
-
-- name: Modify the script of oEmbed module
-  template:
-    src: "oembedcore.module.j2"
-    dest: "/srv/{{islandora_site}}/drupal/sites/all/modules/oembed/oembedcore.module"
-    owner: "apache"
-    group: "apache"
-
-- name: Modify the script of subpathauto module
-  template:
-    src: "subpathauto.module.j2"
-    dest: "/srv/{{islandora_site}}/drupal/sites/all/modules/subpathauto/subpathauto.module"
-    owner: "apache"
-    group: "apache"
-
-- name: Modify the djatoka url of Islandora bookreader module
-  template:
-    src: "theme.inc.j2"
-    dest: "/srv/{{islandora_site}}/drupal/sites/all/modules/islandora_internet_archive_bookreader/theme/theme.inc"
-    owner: "apache"
-    group: "apache"
-
-- name: Destroy config directory
-  file:
-    path: /srv/{{ islandora_site }}/default/files/config
-    state: absent
-
-- name: Fetch OULib repository config
-  git:
-    dest: /srv/{{ islandora_site }}/default/files/config
-    repo: https://github.com/OULibraries/oulib_repo_config.git
-    recursive: yes
-    force: yes
-
-- name: Run config sync
-  command: >
-    /opt/php/bin/drush -r /srv/{{ islandora_site }}/drupal config-sync
-
-- name: run repo_add_logo_block.php
-  command: >
-    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_add_logo_block.php
-
-- name: run repo_add_discover_block.php
-  command: >
-    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_add_discover_block.php
-
-- name: Collection exists?
-  uri:
-    method: GET
-    url: >
-      https://{{ islandora_site}}.{{ httpd_dn_suffix }}//islandora/object/{{ islandora_collection.pid }}
-    validate_certs: no
-    follow_redirects: safe
-    return_content: yes
-    status_code: 200,404
-  register: islandora_collection_check
-
-- name: Conditionally run repo_create_collection.php
-  command: >
-    /opt/php/bin/drush -y -u 1 -r /srv/{{ islandora_site }}/drupal php-script /opt/oulib/island/bin/repo_create_collection.php
-  when: islandora_collection_check.status == 404
